@@ -1,29 +1,25 @@
 //
-//  Bigger.cc
+//  BLogger.cc
 //  Bigger
 //
 //  Created by Edward on 11/7/17.
 //  Copyright © 2017年 Netease. All rights reserved.
 //
 
-#include "Bigger.h"
+#include "BLogger.h"
 
 #include <vector>
 using namespace std;
 
 vector<BLogMonitor *> vecMonitors;
-void BLogDispatcher::WriteLog(BLogType eLogType, const char *pFormat, ...) {
-    va_list arg;
-    va_start(arg, pFormat);
-    char pBuf[1024]={};
-    vsnprintf(pBuf, sizeof(pBuf)-1, pFormat, arg);
+void BLogDispatcher::WriteLog(BLogType eLogType, const char *pLog) {
     vector<BLogMonitor *>::iterator it;
     for (it=vecMonitors.begin(); it!=vecMonitors.end(); it++) {
         if ((*it)->_MonitorType&eLogType) {
-            (*it)->Callback(eLogType, pBuf);
+            (*it)->Callback(eLogType, pLog);
         }
     }
-    va_end(arg);
+    
     return;
 }
 

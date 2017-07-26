@@ -8,15 +8,15 @@
 
 #include <iostream>
 
-#include "Bigger.h"
+#include "BLogger.h"
 
 class ConsolePrinter : public BLogMonitor {
 public:
-    void Callback(BLogType eLogType, const char *pFormat);
+    void Callback(BLogType eLogType, const char *pLog);
 };
 
-void ConsolePrinter::Callback(BLogType eLogType, const char *pFormat) {
-    std::cout<<pFormat;
+void ConsolePrinter::Callback(BLogType eLogType, const char *pLog) {
+    std::cout<<pLog;
     return;
 }
 
