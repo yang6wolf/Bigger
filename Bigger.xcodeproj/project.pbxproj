@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B023D1F1F29C330007D1CDF /* BLoggerInterface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B116ACE1F28A457004049E6 /* BLoggerInterface.cc */; };
 		2B116ACC1F289BEB004049E6 /* Bigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B116AC61F289B6C004049E6 /* Bigger.h */; };
 		2B116AD01F28A457004049E6 /* BLoggerInterface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B116ACE1F28A457004049E6 /* BLoggerInterface.cc */; };
 		2BABD8801F14BC3300FD0237 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BABD87F1F14BC3300FD0237 /* main.cpp */; };
@@ -199,6 +200,7 @@
 			files = (
 				2BABD8801F14BC3300FD0237 /* main.cpp in Sources */,
 				2BABD8881F14BC6D00FD0237 /* BLogger.cc in Sources */,
+				2B023D1F1F29C330007D1CDF /* BLoggerInterface.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,6 +373,7 @@
 				2B116ACB1F289B6C004049E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2BABD8771F14BC3300FD0237 /* Build configuration list for PBXProject "Bigger" */ = {
 			isa = XCConfigurationList;
