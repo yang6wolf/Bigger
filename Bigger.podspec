@@ -21,6 +21,6 @@ Pod::Spec.new do |s|
     s.public_header_files = 'Bigger/Classes/Bigger.h', 'Bigger/Classes/BLoggerInterface.h', 'Bigger/Classes/XlogInterface.h'
     s.platform = :ios
     s.ios.deployment_target = '8.0'
-    s.dependency 'LDXLog', '~> 1.0.7'
+    s.dependency 'LDXLog', '~> 1.0.8'
 
 end
