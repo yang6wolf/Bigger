@@ -1,0 +1,15 @@
+# coding: utf-8
+source 'https://git.ms.netease.com/commonlibraryios/podspec.git'
+
+use_frameworks!
+
+target 'Bigger_Example' do
+  pod 'LDXLog', '~> 1.0.7'
+  pod 'Bigger', :path => '../'
+
+  target 'Bigger_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
