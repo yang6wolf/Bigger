@@ -9,15 +9,12 @@
 #ifndef BLoggerInterface_h
 #define BLoggerInterface_h
 
+#include "BCommonDef.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-typedef enum BLogType{
-    B_LOG_TYPE_ERROR=1,
-    B_LOG_TYPE_INFO=1<<4,
-    B_LOG_TYPE_DEBUG=1<<8
-}BLogType;
 
 void WriteLog(BLogType eLogType, const char *pFormat, ...);
 

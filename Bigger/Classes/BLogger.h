@@ -9,21 +9,7 @@
 #ifndef _BLOGGER_H_
 #define _BLOGGER_H_
 
-#include <stdio.h>
-
-
-//typedef enum BLogType{
-//    B_LOG_TYPE_ERROR=1,
-//    B_LOG_TYPE_INFO=1<<4,
-//    B_LOG_TYPE_DEBUG=1<<8
-//}BLogType;
-
-
-//#define LOGD(fmt, ...) BLogDispatcher::WriteLog(B_LOG_TYPE_DEBUG, fmt, ##__VA_ARGS__)
-//#define LOGI(fmt, ...) BLogDispatcher::WriteLog(B_LOG_TYPE_INFO, fmt, ##__VA_ARGS__)
-//#define LOGE(fmt, ...) BLogDispatcher::WriteLog(B_LOG_TYPE_ERROR, fmt, ##__VA_ARGS__)
-
-#include "BLoggerInterface.h"
+#include "BCommonDef.h"
 
 typedef class BLogMonitor {
 public:
