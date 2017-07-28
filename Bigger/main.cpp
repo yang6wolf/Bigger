@@ -35,5 +35,8 @@ int main(int argc, const char * argv[]) {
     
     LOGI("It works? [%s/%s]\n", "Y", "n");
     
+    ILOGD(x==3, "I can handle this!%s\n", " Bling~");
+//    CHECK(x==0, "I can handle this!%s\n", " Haha~");
+    
     return 0;
 }
