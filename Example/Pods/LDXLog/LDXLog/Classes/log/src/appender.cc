@@ -657,12 +657,13 @@ static void __appender_async(const XLoggerInfo* _info, const char* _log) {
 void bigger_appender(const char* _log) {
     XLoggerInfo* _info = new XLoggerInfo();
     
-    ConsoleLog(_info,  _log);
+    if (sg_consolelog_open)
+        ConsoleLog(_info, _log);
     
     if (kAppednerSync == sg_mode)
-        __appender_sync(_info, _log);
+    __appender_sync(_info, _log);
     else
-        __appender_async(_info, _log);
+    __appender_async(_info, _log);
     
 }
 

@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "BCommonDef.h"
 #import "Bigger.h"
 #import "BLoggerInterface.h"
 #import "XlogInterface.h"

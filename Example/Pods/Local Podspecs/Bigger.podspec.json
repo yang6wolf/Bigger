@@ -16,6 +16,7 @@
   },
   "source_files": "Bigger/Classes/**/*.{h,cc,cpp}",
   "public_header_files": [
+    "Bigger/Classes/BCommonDef.h",
     "Bigger/Classes/Bigger.h",
     "Bigger/Classes/BLoggerInterface.h",
     "Bigger/Classes/XlogInterface.h"
@@ -25,7 +26,7 @@
   },
   "dependencies": {
     "LDXLog": [
-      "~> 1.0.7"
+      "~> 1.0.8"
     ]
   }
 }
