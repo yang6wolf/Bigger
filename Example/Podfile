@@ -7,9 +7,4 @@ target 'Bigger_Example' do
   pod 'LDXLog', '~> 1.0.8'
   pod 'Bigger', :path => '../'
 
-  target 'Bigger_Tests' do
-    inherit! :search_paths
-
-    
-  end
 end

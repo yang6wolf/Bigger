@@ -13,7 +13,7 @@
 #import "BCommonDef.h"
 #import "Bigger.h"
 #import "BLoggerInterface.h"
-#import "XlogInterface.h"
+#import "BigWriterInterface.h"
 
 FOUNDATION_EXPORT double BiggerVersionNumber;
 FOUNDATION_EXPORT const unsigned char BiggerVersionString[];

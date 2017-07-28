@@ -19,7 +19,7 @@
     "Bigger/Classes/BCommonDef.h",
     "Bigger/Classes/Bigger.h",
     "Bigger/Classes/BLoggerInterface.h",
-    "Bigger/Classes/XlogInterface.h"
+    "Bigger/Classes/BigWriterInterface.h"
   ],
   "platforms": {
     "ios": "8.0"

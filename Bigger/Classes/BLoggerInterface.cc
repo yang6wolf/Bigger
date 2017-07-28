@@ -7,7 +7,7 @@
 //
 
 #include "BLoggerInterface.h"
-#include "XlogInterface.h"
+#include "BigWriterInterface.h"
 
 #include "BLogger.h"
 

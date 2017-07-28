@@ -20,12 +20,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    //LOGE("test");
-    NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    //INITXLOG(logPath);
-    INITX([logPath UTF8String], "LDPM");
-    NSLog(@"logPath : %@", logPath);
-    LOGE("疯狂测试!!!!!!");
+    LOGE("界面加载完成！");
 }
 
 - (void)didReceiveMemoryWarning

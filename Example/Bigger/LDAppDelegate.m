@@ -7,11 +7,18 @@
 //
 
 #import "LDAppDelegate.h"
+#import "Bigger.h"
 
 @implementation LDAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
+    
+    INITB([logPath UTF8String], "LDPM");
+    NSLog(@"logPath : %@", logPath);
+    LOGE("启动完成!");
+    
     // Override point for customization after application launch.
     return YES;
 }
@@ -41,6 +48,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    CLOSEB();
 }
 
 @end
