@@ -7,7 +7,6 @@
 //
 
 #include "BLogger.h"
-#include "BigWriterMonitor.h"
 
 #include <vector>
 using namespace std;

@@ -6,38 +6,39 @@
 //  Copyright © 2017年 Netease. All rights reserved.
 //
 
-#ifndef BigWriterMonitor_h
-#define BigWriterMonitor_h
+#ifndef BigEyesMonitor_h
+#define BigEyesMonitor_h
 
 #include <stdio.h>
 #include "BLogger.h"
 
-class BigWriterMonitor : public BLogMonitor {
+class BigEyesMonitor : public BLogMonitor {
 public:
     void Callback(BLogType eLogType, const char *pLog);
     
     virtual void init(const char *_logPath, const char *_filePrefix);
     virtual void open(const char *_logPath, const char *_filePrefix);
     virtual void close();
-    virtual void asyncFlush();
+    virtual void flush();
     virtual void syncFlush();
     
+    const char* getPath();
     bool isPathNull();
     
     void setRegister(bool _isRegister) {isRegister = _isRegister;};
     bool getRegister() {return isRegister;};
     
-    BigWriterMonitor() {
+    BigEyesMonitor() {
         //logPath = NULL;
         isRegister = false;
         _MonitorType = B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
     }
     
-    virtual ~BigWriterMonitor() {
+    virtual ~BigEyesMonitor() {
         delete logPath;
     }
 private:
     static const char *logPath;
     static bool isRegister;
 };
-#endif /* BigWriterMonitor_h */
+#endif /* BigEyesMonitor_h */

@@ -13,7 +13,7 @@
 #import "BCommonDef.h"
 #import "Bigger.h"
 #import "BLoggerInterface.h"
-#import "BigWriterInterface.h"
+#import "BigEyesInterface.h"
 
 FOUNDATION_EXPORT double BiggerVersionNumber;
 FOUNDATION_EXPORT const unsigned char BiggerVersionString[];

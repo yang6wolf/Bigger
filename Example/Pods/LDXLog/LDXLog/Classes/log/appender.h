@@ -31,8 +31,8 @@ enum TAppenderMode
     kAppednerSync,
 };
 
-void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix);
-void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix);
+void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, const char* _pub_key);
+void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix, const char* _pub_key);
 void appender_flush();
 void appender_flush_sync();
 void appender_close();
@@ -44,6 +44,7 @@ bool appender_get_current_log_cache_path(char* _logPath, unsigned int _len);
 void appender_set_console_log(bool _is_open);
 
 void bigger_appender(const char* _log);
+void bigger_flush();
 /*
  * By default, all logs will write to one file everyday. You can split logs to multi-file by changing max_file_size.
  * 

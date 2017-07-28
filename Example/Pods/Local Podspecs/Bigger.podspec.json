@@ -1,6 +1,6 @@
 {
   "name": "Bigger",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "summary": "贵金属项目所使用的第三方组件(非UI部分)",
   "homepage": "https://git.ms.netease.com/preciousmetals/Bigger",
   "license": {
@@ -12,21 +12,21 @@
   },
   "source": {
     "git": "https://git.ms.netease.com/preciousmetals/Bigger.git",
-    "tag": "0.0.1"
+    "tag": "0.0.5"
   },
   "source_files": "Bigger/Classes/**/*.{h,cc,cpp}",
   "public_header_files": [
     "Bigger/Classes/BCommonDef.h",
     "Bigger/Classes/Bigger.h",
     "Bigger/Classes/BLoggerInterface.h",
-    "Bigger/Classes/BigWriterInterface.h"
+    "Bigger/Classes/BigEyesInterface.h"
   ],
   "platforms": {
     "ios": "8.0"
   },
   "dependencies": {
     "LDXLog": [
-      "~> 1.0.8"
+      "~> 1.0.10"
     ]
   }
 }

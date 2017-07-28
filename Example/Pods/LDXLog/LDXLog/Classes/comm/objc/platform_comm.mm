@@ -68,6 +68,9 @@ void ConsoleLog(const XLoggerInfo* _info, const char* _log)
     NSLog(@"%@", [NSString stringWithUTF8String:log]);
 }
 
+void __bigger_ConsoleLog(const char* _log) {
+    NSLog(@"%@", [NSString stringWithUTF8String:_log]);
+}
 
 void comm_export_symbols_1(){}
 

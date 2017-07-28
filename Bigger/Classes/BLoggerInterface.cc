@@ -7,7 +7,6 @@
 //
 
 #include "BLoggerInterface.h"
-#include "BigWriterInterface.h"
 
 #include "BLogger.h"
 

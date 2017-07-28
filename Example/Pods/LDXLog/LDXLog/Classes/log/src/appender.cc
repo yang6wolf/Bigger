@@ -73,6 +73,7 @@
 
 extern void log_formater(const XLoggerInfo* _info, const char* _logbody, PtrBuffer& _log);
 extern void ConsoleLog(const XLoggerInfo* _info, const char* _log);
+extern void __bigger_ConsoleLog(const char* _log);
 
 static TAppenderMode sg_mode = kAppednerAsync;
 
@@ -422,7 +423,8 @@ static bool __writefile(const void* _data, size_t _len, FILE* _file) {
         snprintf(err_log, sizeof(err_log), "\nwrite file error:%d\n", err);
 
         AutoBuffer tmp_buff;
-        LogBuffer::Write(err_log, strnlen(err_log, sizeof(err_log)), tmp_buff);
+        sg_log_buff->Write(err_log, strnlen(err_log, sizeof(err_log)), tmp_buff);
+        
 
         fwrite(tmp_buff.Ptr(), tmp_buff.Length(), 1, _file);
 
@@ -496,7 +498,7 @@ static bool __openlogfile(const std::string& _log_dir) {
         snprintf(log, sizeof(log), "[F][ last log file:%s from %s to %s, time_diff:%ld, tick_diff:%" PRIu64 "\n", s_last_file_path, last_time_str, now_time_str, now_time-s_last_time, now_tick-s_last_tick);
 
         AutoBuffer tmp_buff;
-        LogBuffer::Write(log, strnlen(log, sizeof(log)), tmp_buff);
+        sg_log_buff->Write(log, strnlen(log, sizeof(log)), tmp_buff);
         __writefile(tmp_buff.Ptr(), tmp_buff.Length(), sg_logfile);
     }
 
@@ -596,7 +598,7 @@ static void __writetips2file(const char* _tips_format, ...) {
     va_end(ap);
 
     AutoBuffer tmp_buff;
-    LogBuffer::Write(tips_info, strnlen(tips_info, sizeof(tips_info)), tmp_buff);
+    sg_log_buff->Write(tips_info, strnlen(tips_info, sizeof(tips_info)), tmp_buff);
     
     __log2file(tmp_buff.Ptr(), tmp_buff.Length());
 }
@@ -627,7 +629,7 @@ static void __appender_sync(const XLoggerInfo* _info, const char* _log) {
     log_formater(_info, _log, log);
 
     AutoBuffer tmp_buff;
-    if (!LogBuffer::Write(log.Ptr(), log.Length(), tmp_buff))   return;
+    if (!sg_log_buff->Write(log.Ptr(), log.Length(), tmp_buff))   return;
 
     __log2file(tmp_buff.Ptr(), tmp_buff.Length());
 }
@@ -653,17 +655,49 @@ static void __appender_async(const XLoggerInfo* _info, const char* _log) {
 
 }
 
-//bigger write method
-void bigger_appender(const char* _log) {
-    XLoggerInfo* _info = new XLoggerInfo();
+
+//*
+//Bigger file write method
+//*
+static void __bigger_sync(const char* _log) {
+    char temp[16 * 1024] = {0};     // tell perry,ray if you want modify size.
+    PtrBuffer log(temp, 0, sizeof(temp));
+    log_formater(NULL, _log, log);
     
+    AutoBuffer tmp_buff;
+    if (!sg_log_buff->Write(log.Ptr(), log.Length(), tmp_buff))   return;
+    
+    __log2file(tmp_buff.Ptr(), tmp_buff.Length());
+}
+
+static void __bigger_async(const char* _log) {
+    ScopedLock lock(sg_mutex_buffer_async);
+    if (NULL == sg_log_buff) return;
+    
+    char temp[16*1024] = {0};       //tell perry,ray if you want modify size.
+    PtrBuffer log_buff(temp, 0, sizeof(temp));
+    log_formater(NULL, _log, log_buff);
+    
+    if (sg_log_buff->GetData().Length() >= kBufferBlockLength*4/5) {
+        int ret = snprintf(temp, sizeof(temp), "[F][ sg_buffer_async.Length() >= BUFFER_BLOCK_LENTH*4/5, len: %d\n", (int)sg_log_buff->GetData().Length());
+        log_buff.Length(ret, ret);
+    }
+    
+    if (!sg_log_buff->Write(log_buff.Ptr(), (unsigned int)log_buff.Length())) return;
+    
+    if (sg_log_buff->GetData().Length() >= kBufferBlockLength*1/3) {
+        sg_cond_buffer_async.notifyAll();
+    }
+}
+
+void bigger_appender(const char* _log) {
     if (sg_consolelog_open)
-        ConsoleLog(_info, _log);
+        __bigger_ConsoleLog(_log);
     
     if (kAppednerSync == sg_mode)
-    __appender_sync(_info, _log);
+        __bigger_sync(_log);
     else
-    __appender_async(_info, _log);
+        __bigger_async(_log);
     
 }
 
@@ -810,109 +844,109 @@ static void get_mark_info(char* _info, size_t _infoLen) {
 	snprintf(_info, _infoLen, "[%" PRIdMAX ",%" PRIdMAX "][%s]", xlogger_pid(), xlogger_tid(), tmp_time);
 }
 
-void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix) {
-	assert(_dir);
-	assert(_nameprefix);
+void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, const char* _pub_key) {
+    assert(_dir);
+    assert(_nameprefix);
     
     if (!sg_log_close) {
         __writetips2file("appender has already been opened. _dir:%s _nameprefix:%s", _dir, _nameprefix);
         return;
     }
-
+    
     xlogger_SetAppender(&xlogger_appender);
     
-	//mkdir(_dir, S_IRWXU|S_IRWXG|S_IRWXO);
-	boost::filesystem::create_directories(_dir);
+    //mkdir(_dir, S_IRWXU|S_IRWXG|S_IRWXO);
+    boost::filesystem::create_directories(_dir);
     tickcount_t tick;
     tick.gettickcount();
-	__del_timeout_file(_dir);
-
+    __del_timeout_file(_dir);
+    
     tickcountdiff_t del_timeout_file_time = tickcount_t().gettickcount() - tick;
     
     tick.gettickcount();
-
+    
     char mmap_file_path[512] = {0};
     snprintf(mmap_file_path, sizeof(mmap_file_path), "%s/%s.mmap2", sg_cache_logdir.empty()?_dir:sg_cache_logdir.c_str(), _nameprefix);
-
+    
     bool use_mmap = false;
     if (OpenMmapFile(mmap_file_path, kBufferBlockLength, sg_mmmap_file))  {
-        sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, true);
+        sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, true, _pub_key);
         use_mmap = true;
     } else {
         char* buffer = new char[kBufferBlockLength];
-        sg_log_buff = new LogBuffer(buffer, kBufferBlockLength, true);
+        sg_log_buff = new LogBuffer(buffer, kBufferBlockLength, true, _pub_key);
         use_mmap = false;
     }
-
+    
     if (NULL == sg_log_buff->GetData().Ptr()) {
         if (use_mmap && sg_mmmap_file.is_open())  CloseMmapFile(sg_mmmap_file);
         return;
     }
-
-
+    
+    
     AutoBuffer buffer;
     sg_log_buff->Flush(buffer);
-
-	ScopedLock lock(sg_mutex_log_file);
-	sg_logdir = _dir;
-	sg_logfileprefix = _nameprefix;
-	sg_log_close = false;
-	appender_setmode(_mode);
+    
+    ScopedLock lock(sg_mutex_log_file);
+    sg_logdir = _dir;
+    sg_logfileprefix = _nameprefix;
+    sg_log_close = false;
+    appender_setmode(_mode);
     lock.unlock();
     
     char mark_info[512] = {0};
     get_mark_info(mark_info, sizeof(mark_info));
-
+    
     if (buffer.Ptr()) {
         __writetips2file("~~~~~ begin of mmap ~~~~~\n");
         __log2file(buffer.Ptr(), buffer.Length());
         __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
     }
-
+    
     tickcountdiff_t get_mmap_time = tickcount_t().gettickcount() - tick;
-
-
+    
+    
     char appender_info[728] = {0};
     snprintf(appender_info, sizeof(appender_info), "^^^^^^^^^^" __DATE__ "^^^" __TIME__ "^^^^^^^^^^%s", mark_info);
-
+    
     xlogger_appender(NULL, appender_info);
     char logmsg[64] = {0};
     snprintf(logmsg, sizeof(logmsg), "del time out files time: %" PRIu64, (int64_t)del_timeout_file_time);
     xlogger_appender(NULL, logmsg);
-
+    
     snprintf(logmsg, sizeof(logmsg), "get mmap time: %" PRIu64, (int64_t)get_mmap_time);
     xlogger_appender(NULL, logmsg);
-
-    xlogger_appender(NULL, "MARS_URL: " MARS_URL);
-    xlogger_appender(NULL, "MARS_PATH: " MARS_PATH);
-    xlogger_appender(NULL, "MARS_REVISION: " MARS_REVISION);
-    xlogger_appender(NULL, "MARS_BUILD_TIME: " MARS_BUILD_TIME);
-    xlogger_appender(NULL, "MARS_BUILD_JOB: " MARS_TAG);
-
+    
+//    xlogger_appender(NULL, "MARS_URL: " MARS_URL);
+//    xlogger_appender(NULL, "MARS_PATH: " MARS_PATH);
+//    xlogger_appender(NULL, "MARS_REVISION: " MARS_REVISION);
+//    xlogger_appender(NULL, "MARS_BUILD_TIME: " MARS_BUILD_TIME);
+//    xlogger_appender(NULL, "MARS_BUILD_JOB: " MARS_TAG);
+    
     snprintf(logmsg, sizeof(logmsg), "log appender mode:%d, use mmap:%d", (int)_mode, use_mmap);
     xlogger_appender(NULL, logmsg);
-
-	BOOT_RUN_EXIT(appender_close);
-
+    
+    BOOT_RUN_EXIT(appender_close);
+    
 }
 
-void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix) {
+void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix, const char* _pub_key) {
     assert(!_cachedir.empty());
     assert(!_logdir.empty());
     assert(_nameprefix);
-
+    
     sg_logdir = _logdir;
-
+    
     if (!_cachedir.empty()) {
-    	sg_cache_logdir = _cachedir;
-    	boost::filesystem::create_directories(_cachedir);
-    	__del_timeout_file(_cachedir);
+        sg_cache_logdir = _cachedir;
+        boost::filesystem::create_directories(_cachedir);
+        __del_timeout_file(_cachedir);
         // "_nameprefix" must explicitly convert to "std::string", or when the thread is ready to run, "_nameprefix" has been released.
         Thread(boost::bind(&__move_old_files, _cachedir, _logdir, std::string(_nameprefix))).start_after(3 * 60 * 1000);
     }
-
-    appender_open(_mode, _logdir.c_str(), _nameprefix);
-
+    
+    appender_open(_mode, _logdir.c_str(), _nameprefix, _pub_key);
+    
 }
 
 void appender_flush() {

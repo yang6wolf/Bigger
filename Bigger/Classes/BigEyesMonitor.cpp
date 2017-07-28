@@ -6,24 +6,25 @@
 //  Copyright © 2017年 Netease. All rights reserved.
 //
 
-#include "BigWriterMonitor.h"
+#include "BigEyesMonitor.h"
 #include "LDXlog/appender.h"
 
 #import <sys/xattr.h>
 
-const char* BigWriterMonitor::logPath = NULL;
-bool BigWriterMonitor::isRegister = false;
+const char* BigEyesMonitor::logPath = NULL;
+bool BigEyesMonitor::isRegister = false;
 
-bool BigWriterMonitor::isPathNull() {
+bool BigEyesMonitor::isPathNull() {
     if (logPath == NULL)
         return true;
     return false;
 }
 
-void BigWriterMonitor::Callback(BLogType eLogType, const char *pLog) {
+void BigEyesMonitor::Callback(BLogType eLogType, const char *pLog) {
     switch (eLogType) {
         case B_LOG_TYPE_ERROR:
             bigger_appender(pLog);
+            flush();
         break;
         
         case B_LOG_TYPE_INFO:
@@ -40,7 +41,7 @@ void BigWriterMonitor::Callback(BLogType eLogType, const char *pLog) {
     printf("log : %s", pLog);
 }
 
-void BigWriterMonitor::init(const char *_logPath, const char *_filePrefix) {
+void BigEyesMonitor::init(const char *_logPath, const char *_filePrefix) {
     logPath = _logPath;
     
     // set do not backup for logpath
@@ -55,19 +56,22 @@ void BigWriterMonitor::init(const char *_logPath, const char *_filePrefix) {
 #endif
 }
 
-void BigWriterMonitor::open(const char *_logPath, const char *_filePrefix) {
-    appender_open(kAppednerAsync, _logPath, _filePrefix);
+void BigEyesMonitor::open(const char *_logPath, const char *_filePrefix) {
+    appender_open(kAppednerAsync, _logPath, _filePrefix, NULL);
 }
 
-void BigWriterMonitor::close() {
+void BigEyesMonitor::close() {
     appender_close();
 }
 
-void BigWriterMonitor::asyncFlush() {
+void BigEyesMonitor::flush() {
     appender_flush();
 }
 
-void BigWriterMonitor::syncFlush() {
+void BigEyesMonitor::syncFlush() {
     appender_flush_sync();
 }
 
+const char* BigEyesMonitor::getPath() {
+    return logPath;
+}
