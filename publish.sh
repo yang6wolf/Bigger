@@ -63,9 +63,7 @@ git push
 
 #Deal repo
 podname=$(expr "$filename" : ".*/\(.*\)\.podspec")
-echo $podname
-
-repoinfo=$(pod search $podname)
+repoinfo=$(pod search $podname --simple)
 reponame=$(expr "$repoinfo" : ".*\[\(.*\) repo\]")
-echo $reponame
+
 pod repo push $reponame $filename --allow-warnings --silent
