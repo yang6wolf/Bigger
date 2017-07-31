@@ -15,7 +15,7 @@
 {
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
-    initBigEyes([logPath UTF8String], "LDPM", false);
+    initBigWriter([logPath UTF8String], "LDPM", false);
     NSLog(@"logPath : %@", logPath);
     LOGE("启动完成!");
     
@@ -48,7 +48,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-
+    closeBigWriter();
 }
 
 @end

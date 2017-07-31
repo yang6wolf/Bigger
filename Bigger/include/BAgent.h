@@ -15,11 +15,11 @@ extern "C" {
     
 void printLogToConsole(int nType, int bEnable);
 
-void initBigEyes(const char *_logPath, const char *_prefix, bool _isCrypt);
-void initBigEyesWithType(const char *_logPath, const char *_prefix, bool _isCrypt, int nType);
-void openBigEyes(bool _isCrypt);
-void openBigEyesWithType(bool _isCrypt, int nType);
-void closeBigEyes();
+void initBigWriter(const char *_logPath, const char *_prefix, bool _isCrypt);
+void initBigWriterWithType(const char *_logPath, const char *_prefix, bool _isCrypt, int nType);
+void openBigWriter(bool _isCrypt);
+void openBigWriterWithType(bool _isCrypt, int nType);
+void closeBigWriter();
 
 #if defined(__cplusplus)
 }

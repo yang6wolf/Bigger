@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "BLogger.h"
 
-class BigEyesMonitor : public BLogMonitor {
+class BigWriter : public BLogMonitor {
 public:
     void Callback(BLogType eLogType, const char *pLog);
     
@@ -29,12 +29,13 @@ public:
     void setRegister(bool _isRegister) {isRegister = _isRegister;};
     bool getRegister() {return isRegister;};
     
-    BigEyesMonitor() {
+    BigWriter() {
         _MonitorType = B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
     }
     
-    virtual ~BigEyesMonitor() {
+    virtual ~BigWriter() {
         delete logPath;
+        delete prefix;
     }
 private:
     static const char *logPath;

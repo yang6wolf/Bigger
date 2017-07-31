@@ -1,5 +1,5 @@
 PODS:
-  - Bigger (0.1.0):
+  - Bigger (0.2.0):
     - LDXLog
   - LDXLog (1.0.11)
 
@@ -11,13 +11,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-<<<<<<< HEAD
-  Bigger: 0f6d2341a344196442c14d5d1630f4e0718f2f3e
-  LDXLog: 5799d9665c96a165ac99ac811b3f2df295d5543f
-=======
-  Bigger: 8c59b326195356e6ae70de8d359f154bbf5ad199
+  Bigger: f676aaf9821901165854085762784cbd1740fe74
   LDXLog: e543be8bf86f8819c929a1ea448011a1aee3f732
->>>>>>> 给filewrite的开启接口添加是否加密参数，对Example工程补充了Demo View。
 
 PODFILE CHECKSUM: d7b6cdf9dba1ebe267148bdab5f903d51f4b5b93
 
