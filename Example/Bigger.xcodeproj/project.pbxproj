@@ -21,6 +21,7 @@
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		9DBA7E0E1F29D97900435E66 /* LDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBA7E0D1F29D97900435E66 /* LDViewController.m */; };
+		9DBA7E1F1F2F0B6C00435E66 /* LDTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBA7E1E1F2F0B6C00435E66 /* LDTestViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8CD73F844D4B46F7040C7B10 /* Pods_Bigger_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bigger_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DBA7E0D1F29D97900435E66 /* LDViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LDViewController.m; sourceTree = "<group>"; };
+		9DBA7E1D1F2F0B6C00435E66 /* LDTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDTestViewController.h; sourceTree = "<group>"; };
+		9DBA7E1E1F2F0B6C00435E66 /* LDTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LDTestViewController.m; sourceTree = "<group>"; };
 		BD9ABDBC74E56748D6978FBA /* Bigger.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Bigger.podspec; path = ../Bigger.podspec; sourceTree = "<group>"; };
 		ECC392A41D312F8F7383CE51 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,6 +129,8 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* LDViewController.h */,
 				9DBA7E0D1F29D97900435E66 /* LDViewController.m */,
+				9DBA7E1D1F2F0B6C00435E66 /* LDTestViewController.h */,
+				9DBA7E1E1F2F0B6C00435E66 /* LDTestViewController.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -313,6 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DBA7E1F1F2F0B6C00435E66 /* LDTestViewController.m in Sources */,
 				6003F59E195388D20070C39A /* LDAppDelegate.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				9DBA7E0E1F29D97900435E66 /* LDViewController.m in Sources */,

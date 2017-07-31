@@ -25,11 +25,6 @@
     printLogToConsole(B_LOG_TYPE_ERROR | B_LOG_TYPE_ERROR, 1);
     
     LOGE("界面加载完成！");
-    //LOGE("test");
-    NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    //INITXLOG(logPath);
-//    INITX([logPath UTF8String], "LDPM");
-    NSLog(@"logPath : %@", logPath);
     LOGE("疯狂测试!!!!!!");
 }
 
@@ -37,6 +32,9 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (IBAction)testButtonDemo:(UIButton *)sender {
+    LOGE("button1 test");
 }
 
 @end

@@ -12,6 +12,7 @@
 #import <sys/xattr.h>
 
 const char* BigEyesMonitor::logPath = NULL;
+const char* BigEyesMonitor::prefix = NULL;
 bool BigEyesMonitor::isRegister = false;
 
 bool BigEyesMonitor::isPathNull() {
@@ -38,26 +39,23 @@ void BigEyesMonitor::Callback(BLogType eLogType, const char *pLog) {
         default:
         break;
     }
-    printf("log : %s", pLog);
+    printf("prefix : %s", prefix);
 }
 
-void BigEyesMonitor::init(const char *_logPath, const char *_filePrefix) {
+void BigEyesMonitor::init(const char *_logPath, const char *_prefix) {
     logPath = _logPath;
+    prefix = _prefix;
     
     // set do not backup for logpath
     const char* attrName = "com.apple.MobileBackup";
     u_int8_t attrValue = 1;
     setxattr(logPath, attrName, &attrValue, sizeof(attrValue), 0, 0);
     
-#if DEBUG
-    appender_set_console_log(true);
-#else
     appender_set_console_log(false);
-#endif
 }
 
-void BigEyesMonitor::open(const char *_logPath, const char *_filePrefix) {
-    appender_open(kAppednerAsync, _logPath, _filePrefix, NULL);
+void BigEyesMonitor::open() {
+    appender_open(kAppednerAsync, logPath, prefix, NULL);
 }
 
 void BigEyesMonitor::close() {

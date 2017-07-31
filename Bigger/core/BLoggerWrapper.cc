@@ -7,7 +7,6 @@
 //
 
 #include "BLoggerWrapper.h"
-#include "BigEyesInterface.h"
 
 #include "BLogger.h"
 

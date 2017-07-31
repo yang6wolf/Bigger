@@ -691,14 +691,44 @@ static void __bigger_async(const char* _log) {
 }
 
 void bigger_appender(const char* _log) {
-    if (sg_consolelog_open)
-        __bigger_ConsoleLog(_log);
+    if (sg_log_close) return;
     
-    if (kAppednerSync == sg_mode)
-        __bigger_sync(_log);
-    else
-        __bigger_async(_log);
+    SCOPE_ERRNO();
     
+    DEFINE_SCOPERECURSIONLIMIT(recursion);
+    static Tss s_recursion_str(free);
+    
+    if (sg_consolelog_open) __bigger_ConsoleLog(_log);
+    
+    if (2 <= (int)recursion.Get() && NULL == s_recursion_str.get()) {
+        if ((int)recursion.Get() > 10) return;
+        char* strrecursion = (char*)calloc(16 * 1024, 1);
+        s_recursion_str.set((void*)(strrecursion));
+        
+        char recursive_log[256] = {0};
+        snprintf(recursive_log, sizeof(recursive_log), "ERROR!!! xlogger_appender Recursive calls!!!, count:%d", (int)recursion.Get());
+        
+        PtrBuffer tmp(strrecursion, 0, 16*1024);
+        log_formater(NULL, recursive_log, tmp);
+        
+        strncat(strrecursion, _log, 4096);
+        strrecursion[4095] = '\0';
+        
+        ConsoleLog(NULL,  strrecursion);
+    } else {
+        if (NULL != s_recursion_str.get()) {
+            char* strrecursion = (char*)s_recursion_str.get();
+            s_recursion_str.set(NULL);
+            
+            __writetips2file(strrecursion);
+            free(strrecursion);
+        }
+        
+        if (kAppednerSync == sg_mode)
+            __bigger_sync(_log);
+        else
+            __bigger_async(_log);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,10 @@ FOUNDATION_EXPORT const unsigned char BiggerVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Bigger/PublicHeader.h>
 
+<<<<<<< HEAD:Bigger/include/Bigger.h
 #import "BAgent.h"
+=======
+>>>>>>> 给filewrite的开启接口添加是否加密参数，对Example工程补充了Demo View。:Bigger/Classes/Bigger.h
 #import "BLoggerWrapper.h"
 #import "BigEyesInterface.h"
 

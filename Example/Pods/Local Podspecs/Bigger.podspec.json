@@ -14,14 +14,24 @@
     "git": "https://git.ms.netease.com/preciousmetals/Bigger.git",
     "tag": "0.1.0"
   },
+<<<<<<< HEAD
   "source_files": "Bigger/**/*.{h,cc,cpp}",
   "public_header_files": "Bigger/include/*.h",
+=======
+  "source_files": "Bigger/Classes/**/*.{h,cc,cpp}",
+  "public_header_files": [
+    "Bigger/Classes/BCommonDef.h",
+    "Bigger/Classes/Bigger.h",
+    "Bigger/Classes/BLoggerWrapper.h",
+    "Bigger/Classes/BAgent.h"
+  ],
+>>>>>>> 给filewrite的开启接口添加是否加密参数，对Example工程补充了Demo View。
   "platforms": {
     "ios": "8.0"
   },
   "dependencies": {
     "LDXLog": [
-      "~> 1.0.10"
+
     ]
   }
 }

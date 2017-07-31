@@ -16,21 +16,20 @@ class BigEyesMonitor : public BLogMonitor {
 public:
     void Callback(BLogType eLogType, const char *pLog);
     
-    virtual void init(const char *_logPath, const char *_filePrefix);
-    virtual void open(const char *_logPath, const char *_filePrefix);
-    virtual void close();
-    virtual void flush();
-    virtual void syncFlush();
+    void init(const char *_logPath, const char *_prefix);
+    void open();
+    void close();
+    void flush();
+    void syncFlush();
     
     const char* getPath();
     bool isPathNull();
     
+    void setMonitorType(int _type) {_MonitorType = _type;};
     void setRegister(bool _isRegister) {isRegister = _isRegister;};
     bool getRegister() {return isRegister;};
     
     BigEyesMonitor() {
-        //logPath = NULL;
-        isRegister = false;
         _MonitorType = B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
     }
     
@@ -39,6 +38,7 @@ public:
     }
 private:
     static const char *logPath;
+    static const char *prefix;
     static bool isRegister;
 };
 #endif /* BigEyesMonitor_h */

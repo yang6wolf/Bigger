@@ -18,9 +18,13 @@ Pod::Spec.new do |s|
 
     s.source_files = 'Bigger/**/*.{h,cc,cpp}'
     # s.private_header_files = 'Bigger/Classes/BLogger.h'
+<<<<<<< HEAD
     s.public_header_files = 'Bigger/include/*.h'
+=======
+    s.public_header_files = 'Bigger/Classes/BCommonDef.h', 'Bigger/Classes/Bigger.h', 'Bigger/Classes/BLoggerWrapper.h', 'Bigger/Classes/BAgent.h'
+>>>>>>> 给filewrite的开启接口添加是否加密参数，对Example工程补充了Demo View。
     s.platform = :ios
     s.ios.deployment_target = '8.0'
-    s.dependency 'LDXLog', '~> 1.0.10'
+    s.dependency 'LDXLog'
 
 end

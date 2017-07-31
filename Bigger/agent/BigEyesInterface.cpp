@@ -6,47 +6,76 @@
 //
 //
 
-#include "BigEyesInterface.h"
+#include "BAgent.h"
 #include "BigEyesMonitor.h"
 
 static BigEyesMonitor *bigEyesMonitor = NULL;
 
-void initBigEyes(const char *_logPath, const char *_filePrefix) {
-    if (bigEyesMonitor == NULL)
+void initBigEyes(const char *_logPath, const char *_prefix, bool _isCrypt) {
+    if (bigEyesMonitor == NULL) {
         bigEyesMonitor = new BigEyesMonitor();
+        bigEyesMonitor->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
+    }
     
     if (bigEyesMonitor->isPathNull())
-        bigEyesMonitor->init(_logPath, _filePrefix);
+        bigEyesMonitor->init(_logPath, _prefix);
     else {
         printf("BigEyesMonitor has already been inited!\n");
         return;
     }
     
-    bigEyesMonitor->open(_logPath, _filePrefix);
-    BLogDispatcher::RegisterMonitor(bigEyesMonitor);
-    bigEyesMonitor->setRegister(true);
-    
+    openBigEyes(_isCrypt);
 }
 
-void openBigEyes(const char *_logPath, const char *_filePrefix) {
+void initBigEyesWithType(const char *_logPath, const char *_prefix, bool _isCrypt, int nType) {
     if (bigEyesMonitor == NULL) {
-        initBigEyes(_logPath, _filePrefix);
+        bigEyesMonitor = new BigEyesMonitor();
+        bigEyesMonitor->setMonitorType(nType);
+    }
+    
+    if (bigEyesMonitor->isPathNull())
+    bigEyesMonitor->init(_logPath, _prefix);
+    else {
+        printf("BigEyesMonitor has already been inited!\n");
         return;
     }
-    if (bigEyesMonitor->getRegister()) {
-        printf("BigEyesMonitor has already been opened!\n");
-        return;
+    
+    openBigEyes(_isCrypt);
+}
+
+bool checkInit() {
+    if (bigEyesMonitor == NULL || bigEyesMonitor->isPathNull()) {
+        printf("BigEyes didn't init!");
+        return false;
     }
-    bigEyesMonitor->open(_logPath, _filePrefix);
-    BLogDispatcher::RegisterMonitor(bigEyesMonitor);
-    bigEyesMonitor->setRegister(true);
+    return true;
+}
+
+void openBigEyesWithType(bool _isCrypt, int nType) {
+    if (!checkInit())
+        return;
+    bigEyesMonitor->setMonitorType(nType);
+    openBigEyes(_isCrypt);
+}
+
+void openBigEyes(bool _isCrypt) {
+    if (!checkInit())
+        return;
+    if (!bigEyesMonitor->getRegister()) {
+        bigEyesMonitor->open();
+        BLogDispatcher::RegisterMonitor(bigEyesMonitor);
+        bigEyesMonitor->setRegister(true);
+    }
 }
 
 void closeBigEyes() {
-    bigEyesMonitor->close();
-    BLogDispatcher::DeReisterMonitor(bigEyesMonitor);
-    bigEyesMonitor->setRegister(false);
+    if (!checkInit())
+        return;
+    if (bigEyesMonitor->getRegister()) {
+        bigEyesMonitor->close();
+        BLogDispatcher::DeReisterMonitor(bigEyesMonitor);
+        bigEyesMonitor->setRegister(false);
+    }
 }
-
 
 

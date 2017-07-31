@@ -15,7 +15,12 @@ extern "C" {
     
 void printLogToConsole(int nType, int bEnable);
 
-    
+void initBigEyes(const char *_logPath, const char *_prefix, bool _isCrypt);
+void initBigEyesWithType(const char *_logPath, const char *_prefix, bool _isCrypt, int nType);
+void openBigEyes(bool _isCrypt);
+void openBigEyesWithType(bool _isCrypt, int nType);
+void closeBigEyes();
+
 #if defined(__cplusplus)
 }
 #endif
