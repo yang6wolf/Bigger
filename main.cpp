@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include "BLogger.h"
-#include "BLoggerInterface.h"
+#include "BLoggerWrapper.h"
 
 class ConsolePrinter : public BLogMonitor {
 public:
@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
     
     ConsolePrinter printer;
     printer._MonitorType = B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
-    BLogDispatcher::RegisterMonitor(printer);
+    BLogDispatcher::RegisterMonitor(&printer);
     
     int x=3;
     LOGE("Have a try--%d\n", x);

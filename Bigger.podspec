@@ -16,9 +16,9 @@ Pod::Spec.new do |s|
     s.author       = { "YangXP" => "bjyangxiaopeng1@corp.netease.com" }
     s.source       = { :git => "https://git.ms.netease.com/preciousmetals/Bigger.git", :tag => s.version.to_s}
 
-    s.source_files = 'Bigger/Classes/**/*.{h,cc,cpp}'
+    s.source_files = 'Bigger/**/*.{h,cc,cpp}'
     # s.private_header_files = 'Bigger/Classes/BLogger.h'
-    s.public_header_files = 'Bigger/Classes/BCommonDef.h', 'Bigger/Classes/Bigger.h', 'Bigger/Classes/BLoggerWrapper.h', 'Bigger/Classes/XlogInterface.h', 'Bigger/Classes/BAgent.h', 'Bigger/Classes/BigEyesInterface.h'
+    s.public_header_files = 'Bigger/include/*.h'
     s.platform = :ios
     s.ios.deployment_target = '8.0'
     s.dependency 'LDXLog', '~> 1.0.10'

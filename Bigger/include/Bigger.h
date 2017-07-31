@@ -16,5 +16,7 @@ FOUNDATION_EXPORT const unsigned char BiggerVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Bigger/PublicHeader.h>
 
-#import "BigEyesInterface.h"
+#import "BAgent.h"
 #import "BLoggerWrapper.h"
+#import "BigEyesInterface.h"
+

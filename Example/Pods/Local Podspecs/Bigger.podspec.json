@@ -14,15 +14,8 @@
     "git": "https://git.ms.netease.com/preciousmetals/Bigger.git",
     "tag": "0.1.0"
   },
-  "source_files": "Bigger/Classes/**/*.{h,cc,cpp}",
-  "public_header_files": [
-    "Bigger/Classes/BCommonDef.h",
-    "Bigger/Classes/Bigger.h",
-    "Bigger/Classes/BLoggerWrapper.h",
-    "Bigger/Classes/XlogInterface.h",
-    "Bigger/Classes/BAgent.h",
-    "Bigger/Classes/BigEyesInterface.h"
-  ],
+  "source_files": "Bigger/**/*.{h,cc,cpp}",
+  "public_header_files": "Bigger/include/*.h",
   "platforms": {
     "ios": "8.0"
   },
