@@ -1,13 +1,13 @@
 //
-//  BLoggerInterface.h
+//  BLoggerWrapper.h
 //  Bigger
 //
 //  Created by Edward on 26/7/17.
 //  Copyright © 2017年 Netease. All rights reserved.
 //
 
-#ifndef BLoggerInterface_h
-#define BLoggerInterface_h
+#ifndef BLoggerWrapper_h
+#define BLoggerWrapper_h
 
 #include "BCommonDef.h"
 
@@ -44,4 +44,4 @@ void WriteLog(BLogType eLogType, const char *pFormat, ...);
 }
 #endif
 
-#endif /* BLoggerInterface_h */
+#endif /* BLoggerWrapper_h */

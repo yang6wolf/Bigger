@@ -23,7 +23,7 @@ void initBigEyes(const char *_logPath, const char *_filePrefix) {
     }
     
     bigEyesMonitor->open(_logPath, _filePrefix);
-    BLogDispatcher::RegisterMonitor(*bigEyesMonitor);
+    BLogDispatcher::RegisterMonitor(bigEyesMonitor);
     bigEyesMonitor->setRegister(true);
     
 }
@@ -38,13 +38,13 @@ void openBigEyes(const char *_logPath, const char *_filePrefix) {
         return;
     }
     bigEyesMonitor->open(_logPath, _filePrefix);
-    BLogDispatcher::RegisterMonitor(*bigEyesMonitor);
+    BLogDispatcher::RegisterMonitor(bigEyesMonitor);
     bigEyesMonitor->setRegister(true);
 }
 
 void closeBigEyes() {
     bigEyesMonitor->close();
-    BLogDispatcher::DeReisterMonitor(*bigEyesMonitor);
+    BLogDispatcher::DeReisterMonitor(bigEyesMonitor);
     bigEyesMonitor->setRegister(false);
 }
 

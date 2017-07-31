@@ -12,7 +12,8 @@
 
 #import "BCommonDef.h"
 #import "Bigger.h"
-#import "BLoggerInterface.h"
+#import "BLoggerWrapper.h"
+#import "BAgent.h"
 #import "BigEyesInterface.h"
 
 FOUNDATION_EXPORT double BiggerVersionNumber;

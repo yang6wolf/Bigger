@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "Bigger"
-    s.version      = "0.0.5"
+    s.version      = "0.1.0"
     s.summary      = "贵金属项目所使用的第三方组件(非UI部分)"
     s.homepage     = "https://git.ms.netease.com/preciousmetals/Bigger"
     s.license      = { :type => 'MIT', :file => 'LICENSE'}
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
     s.source_files = 'Bigger/Classes/**/*.{h,cc,cpp}'
     # s.private_header_files = 'Bigger/Classes/BLogger.h'
-    s.public_header_files = 'Bigger/Classes/BCommonDef.h','Bigger/Classes/Bigger.h', 'Bigger/Classes/BLoggerInterface.h', 'Bigger/Classes/BigEyesInterface.h'
+    s.public_header_files = 'Bigger/Classes/BCommonDef.h', 'Bigger/Classes/Bigger.h', 'Bigger/Classes/BLoggerWrapper.h', 'Bigger/Classes/XlogInterface.h', 'Bigger/Classes/BAgent.h', 'Bigger/Classes/BigEyesInterface.h'
     s.platform = :ios
     s.ios.deployment_target = '8.0'
     s.dependency 'LDXLog', '~> 1.0.10'

@@ -32,9 +32,9 @@ public:
     static void WriteLog(BLogType eLogType, const char *pLog);
     
     // if want to monitor multi types, use | to combine them
-    static int RegisterMonitor(BLogMonitor &observer);
+    static int RegisterMonitor(BLogMonitor *pMonitor);
     
-    static int DeReisterMonitor(BLogMonitor &observer);
+    static int DeReisterMonitor(BLogMonitor *pMonitor);
     
 protected:
     BLogDispatcher();

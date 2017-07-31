@@ -1,12 +1,13 @@
 //
-//  BLoggerInterface.cc
+//  BLoggerWrapper.cc
 //  Bigger
 //
 //  Created by Edward on 26/7/17.
 //  Copyright © 2017年 Netease. All rights reserved.
 //
 
-#include "BLoggerInterface.h"
+#include "BLoggerWrapper.h"
+#include "BigEyesInterface.h"
 
 #include "BLogger.h"
 

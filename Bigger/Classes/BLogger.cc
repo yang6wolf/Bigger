@@ -26,15 +26,15 @@ void BLogDispatcher::WriteLog(BLogType eLogType, const char *pLog) {
     return;
 }
 
-int BLogDispatcher::RegisterMonitor(BLogMonitor &observer) {
-    vecMonitors.push_back(&observer);
+int BLogDispatcher::RegisterMonitor(BLogMonitor *pMonitor) {
+    vecMonitors.push_back(pMonitor);
     return 1;
 }
 
-int BLogDispatcher::DeReisterMonitor(BLogMonitor &observer) {
-    vector<BLogMonitor *>::iterator it;
+int BLogDispatcher::DeReisterMonitor(BLogMonitor *pMonitor) {
+    vector<BLogMonitor *>::const_iterator it;
     for (it=vecMonitors.begin(); it!=vecMonitors.end();) {
-        if ((*it)->_MonitorID == observer._MonitorID) {
+        if ((*it)->_MonitorID == pMonitor->_MonitorID) {
             it=vecMonitors.erase(it);
         }
         else {
