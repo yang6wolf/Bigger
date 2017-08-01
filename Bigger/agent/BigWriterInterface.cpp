@@ -45,7 +45,7 @@ void initBigWriterWithType(const char *_logPath, const char *_prefix, bool _isCr
 
 bool checkInit() {
     if (bigWriter == NULL || bigWriter->isPathNull()) {
-        printf("BigWriter didn't init!");
+        printf("BigWriter didn't init!\n");
         return false;
     }
     return true;
@@ -78,4 +78,15 @@ void closeBigWriter() {
     }
 }
 
+void flushBigWriter() {
+    if (!checkInit())
+        return;
+    bigWriter->flush();
+}
+
+void syncFlushBigWriter() {
+    if (!checkInit())
+        return;
+    bigWriter->syncFlush();
+}
 

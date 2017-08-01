@@ -34,7 +34,8 @@
     // Dispose of any resources that can be recreated.
 }
 - (IBAction)testButtonDemo:(UIButton *)sender {
-    LOGE("button1 test");
+    LOGI("button1 test");
+    flushBigWriter();
 }
 
 @end

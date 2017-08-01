@@ -20,6 +20,8 @@ void initBigWriterWithType(const char *_logPath, const char *_prefix, bool _isCr
 void openBigWriter(bool _isCrypt);
 void openBigWriterWithType(bool _isCrypt, int nType);
 void closeBigWriter();
+void flushBigWriter();
+void syncFlushBigWriter();
 
 #if defined(__cplusplus)
 }
