@@ -15,7 +15,7 @@
 {
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
-    initBigWriter([logPath UTF8String], "LDPM", false);
+    initBigWriter([logPath UTF8String], "LDPM", false, false);
     NSLog(@"logPath : %@", logPath);
     LOGE("启动完成!");
     

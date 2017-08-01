@@ -14,6 +14,8 @@
 const char* BigWriter::logPath = NULL;
 const char* BigWriter::prefix = NULL;
 bool BigWriter::isRegister = false;
+bool BigWriter::isCompress = false;
+bool BigWriter::isCrypt = false;
 
 bool BigWriter::isPathNull() {
     if (logPath == NULL)
@@ -41,9 +43,11 @@ void BigWriter::Callback(BLogType eLogType, const char *pLog) {
     }
 }
 
-void BigWriter::init(const char *_logPath, const char *_prefix) {
+void BigWriter::init(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt) {
     logPath = _logPath;
     prefix = _prefix;
+    isCompress = _isCompress;
+    isCrypt = _isCrypt;
     
     // set do not backup for logpath
     const char* attrName = "com.apple.MobileBackup";
@@ -54,7 +58,7 @@ void BigWriter::init(const char *_logPath, const char *_prefix) {
 }
 
 void BigWriter::open() {
-    appender_open(kAppednerAsync, logPath, prefix, NULL);
+    appender_open(kAppednerAsync, logPath, prefix, isCompress, isCrypt, NULL);
 }
 
 void BigWriter::close() {

@@ -69,7 +69,7 @@
 
 #include "log_buffer.h"
 
-#define LOG_EXT "xlog"
+#define LOG_EXT "log"
 
 extern void log_formater(const XLoggerInfo* _info, const char* _logbody, PtrBuffer& _log);
 extern void ConsoleLog(const XLoggerInfo* _info, const char* _log);
@@ -409,7 +409,7 @@ static bool __writefile(const void* _data, size_t _len, FILE* _file) {
 
     long before_len = ftell(_file);
     if (before_len < 0) return false;
-
+    
     if (1 != fwrite(_data, _len, 1, _file)) {
         int err = ferror(_file);
 
@@ -874,7 +874,7 @@ static void get_mark_info(char* _info, size_t _infoLen) {
 	snprintf(_info, _infoLen, "[%" PRIdMAX ",%" PRIdMAX "][%s]", xlogger_pid(), xlogger_tid(), tmp_time);
 }
 
-void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, const char* _pub_key) {
+void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, bool _is_compress, bool _is_crypt, const char* _pub_key) {
     assert(_dir);
     assert(_nameprefix);
     
@@ -900,11 +900,11 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     
     bool use_mmap = false;
     if (OpenMmapFile(mmap_file_path, kBufferBlockLength, sg_mmmap_file))  {
-        sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, true, _pub_key);
+        sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, _is_compress, _is_crypt, _pub_key);
         use_mmap = true;
     } else {
         char* buffer = new char[kBufferBlockLength];
-        sg_log_buff = new LogBuffer(buffer, kBufferBlockLength, true, _pub_key);
+        sg_log_buff = new LogBuffer(buffer, kBufferBlockLength, _is_compress, _is_crypt, _pub_key);
         use_mmap = false;
     }
     
@@ -975,7 +975,7 @@ void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir,
         Thread(boost::bind(&__move_old_files, _cachedir, _logdir, std::string(_nameprefix))).start_after(3 * 60 * 1000);
     }
     
-    appender_open(_mode, _logdir.c_str(), _nameprefix, _pub_key);
+    appender_open(_mode, _logdir.c_str(), _nameprefix, true, true, _pub_key);
     
 }
 

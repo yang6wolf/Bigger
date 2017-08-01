@@ -16,7 +16,7 @@ class BigWriter : public BLogMonitor {
 public:
     void Callback(BLogType eLogType, const char *pLog);
     
-    void init(const char *_logPath, const char *_prefix);
+    void init(const char *_logPath, const char *_prefix, bool isCompress, bool isCrypt);
     void open();
     void close();
     void flush();
@@ -41,5 +41,7 @@ private:
     static const char *logPath;
     static const char *prefix;
     static bool isRegister;
+    static bool isCompress;
+    static bool isCrypt;
 };
 #endif /* BigEyesMonitor_h */

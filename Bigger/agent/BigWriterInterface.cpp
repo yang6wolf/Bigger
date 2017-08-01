@@ -11,36 +11,36 @@
 
 static BigWriter *bigWriter = NULL;
 
-void initBigWriter(const char *_logPath, const char *_prefix, bool _isCrypt) {
+void initBigWriter(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt) {
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
         bigWriter->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
     }
     
     if (bigWriter->isPathNull())
-        bigWriter->init(_logPath, _prefix);
+        bigWriter->init(_logPath, _prefix, _isCompress, _isCrypt);
     else {
         printf("BigWriter has already been inited!\n");
         return;
     }
     
-    openBigWriter(_isCrypt);
+    openBigWriter();
 }
 
-void initBigWriterWithType(const char *_logPath, const char *_prefix, bool _isCrypt, int nType) {
+void initBigWriterWithType(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt, int nType) {
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
         bigWriter->setMonitorType(nType);
     }
     
     if (bigWriter->isPathNull())
-        bigWriter->init(_logPath, _prefix);
+        bigWriter->init(_logPath, _prefix, _isCompress, _isCrypt);
     else {
         printf("BigWriter has already been inited!\n");
         return;
     }
     
-    openBigWriter(_isCrypt);
+    openBigWriter();
 }
 
 bool checkInit() {
@@ -51,42 +51,42 @@ bool checkInit() {
     return true;
 }
 
-void openBigWriterWithType(bool _isCrypt, int nType) {
+void openBigWriterWithType(int nType) {
     if (!checkInit())
         return;
     bigWriter->setMonitorType(nType);
-    openBigWriter(_isCrypt);
+    openBigWriter();
 }
 
-void openBigWriter(bool _isCrypt) {
-    if (!checkInit())
+void openBigWriter() {
+    if (!checkInit() || bigWriter->getRegister())
         return;
-    if (!bigWriter->getRegister()) {
-        bigWriter->open();
-        BLogDispatcher::RegisterMonitor(bigWriter);
-        bigWriter->setRegister(true);
-    }
+    
+    bigWriter->open();
+    BLogDispatcher::RegisterMonitor(bigWriter);
+    bigWriter->setRegister(true);
 }
 
 void closeBigWriter() {
-    if (!checkInit())
+    if (!checkInit() || !bigWriter->getRegister())
         return;
-    if (bigWriter->getRegister()) {
-        bigWriter->close();
-        BLogDispatcher::DeReisterMonitor(bigWriter);
-        bigWriter->setRegister(false);
-    }
+    
+    bigWriter->close();
+    BLogDispatcher::DeReisterMonitor(bigWriter);
+    bigWriter->setRegister(false);
 }
 
 void flushBigWriter() {
-    if (!checkInit())
+    if (!checkInit() || !bigWriter->getRegister())
         return;
+    
     bigWriter->flush();
 }
 
 void syncFlushBigWriter() {
-    if (!checkInit())
+    if (!checkInit() || !bigWriter->getRegister())
         return;
+    
     bigWriter->syncFlush();
 }
 
