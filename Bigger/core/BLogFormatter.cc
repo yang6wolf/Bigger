@@ -113,7 +113,7 @@ void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID
     }
     
     // _log.AllocWrite(30*1024, false);
-    snprintf(pBuf, 1024, "[%s][%" PRIdMAX ":%" PRIdMAX "%s][%s][%s, %s, %d] %s",
+    snprintf(pBuf, 1024, "[%s][%" PRIdMAX ":%" PRIdMAX "%s][%s][%-30s, %-24s, %3d] %s",
                        temp_time,
              nPID, nTID, nTID == nMainTID ? "*" : "", pLevel,
                        filename, strFuncName, nLineNumber, pBody);
