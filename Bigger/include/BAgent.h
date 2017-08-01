@@ -22,6 +22,8 @@ void openBigWriterWithType(int nType);
 void closeBigWriter();
 void flushBigWriter();
 void syncFlushBigWriter();
+    
+void runCommand(const char * identifier);
 
 #if defined(__cplusplus)
 }
