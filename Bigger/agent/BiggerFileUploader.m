@@ -55,11 +55,11 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     
     // generate URL request
     if (identifier) {
-        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@-%@.xlog", identifier, dateString]
+        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@-%@.log", identifier, dateString]
                            contentType:@"text/plain; charset=utf-8"
                             uploadData:uploadData];
     } else {
-        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@.xlog", dateString]
+        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@.log", dateString]
                            contentType:@"text/plain; charset=utf-8"
                             uploadData:uploadData];
     }
