@@ -15,28 +15,28 @@
 extern "C" {
 #endif
 
+    
+void WriteLog(BLogType eLogType, const char *pFileName, int nLineNumber, const char *pFuncName, const char *pFormat, ...);
 
-void WriteLog(BLogType eLogType, const char *pFormat, ...);
 
-
-#define LOGD(fmt, ...) WriteLog(B_LOG_TYPE_DEBUG, fmt, ##__VA_ARGS__)
-#define LOGI(fmt, ...) WriteLog(B_LOG_TYPE_INFO, fmt, ##__VA_ARGS__)
-#define LOGE(fmt, ...) WriteLog(B_LOG_TYPE_ERROR, fmt, ##__VA_ARGS__)
+#define LOGD(fmt, ...) WriteLog(B_LOG_TYPE_DEBUG, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
+#define LOGI(fmt, ...) WriteLog(B_LOG_TYPE_INFO, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
+#define LOGE(fmt, ...) WriteLog(B_LOG_TYPE_ERROR, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
     
 
 #define ILOGD(s, fmt, ...) \
     if(s) {\
-        WriteLog(B_LOG_TYPE_DEBUG, fmt, ##__VA_ARGS__);\
+        WriteLog(B_LOG_TYPE_DEBUG, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);\
     }
 
 #define ILOGI(s, fmt, ...) \
     if(s) {\
-        WriteLog(B_LOG_TYPE_INFO, fmt, ##__VA_ARGS__);\
+        WriteLog(B_LOG_TYPE_INFO, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);\
     }
 
 #define ILOGE(s, fmt, ...) \
     if(s) {\
-        WriteLog(B_LOG_TYPE_ERROR, fmt, ##__VA_ARGS__);\
+        WriteLog(B_LOG_TYPE_ERROR, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);\
     }
 
     

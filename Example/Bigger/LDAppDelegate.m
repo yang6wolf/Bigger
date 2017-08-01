@@ -7,17 +7,22 @@
 //
 
 #import "LDAppDelegate.h"
+
 @import Bigger;
 
 @implementation LDAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    printLogToConsole(0xFFFFFFFF, 1);
+    
+    ILOGD(3==3, "Have a try %s", "!~");
+    NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
-    initBigWriter([logPath UTF8String], "LDPM", false);
+    initBigWriter([logPath UTF8String], "LDPM", false, false);
     NSLog(@"logPath : %@", logPath);
-    LOGE("启动完成!");
+//    LOGE("启动完成!");
     
     // Override point for customization after application launch.
     return YES;

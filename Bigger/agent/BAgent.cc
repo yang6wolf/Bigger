@@ -18,7 +18,7 @@ public:
 };
 
 void ConsolePrinter::Callback(BLogType eLogType, const char *pLog) {
-    std::cout<<pLog;
+    std::cout<<pLog<<"\n";
     return;
 }
 
