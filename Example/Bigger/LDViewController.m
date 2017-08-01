@@ -25,6 +25,8 @@
     printLogToConsole(B_LOG_TYPE_ERROR | B_LOG_TYPE_ERROR, 1);
     
     LOGE("界面加载完成！");
+    
+    runCommand("identifier");
 }
 
 - (void)didReceiveMemoryWarning
