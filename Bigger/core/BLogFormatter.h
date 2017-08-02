@@ -14,6 +14,6 @@
 
 #include "BCommonDef.h"
 
-void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID, intmax_t nMainTID, const char *pFileName, int nLineNumber, const char *pFuncName, struct timeval *pTimeval, const char *pBody);
+void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID, intmax_t nMainTID, const char *pTag, const char *pFileName, int nLineNumber, const char *pFuncName, struct timeval *pTimeval, const char *pBody);
 
 #endif /* BLogFormatter_h */

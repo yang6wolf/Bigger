@@ -15,10 +15,10 @@
 #include <limits.h>
 #include <algorithm>
 
-const char* ExtractFileName(const char* _path) {
+const char *ExtractFileName(const char *_path) {
     if (NULL == _path) return "";
     
-    const char* pos = strrchr(_path, '\\');
+    const char *pos = strrchr(_path, '\\');
     
     if (NULL == pos) {
         pos = strrchr(_path, '/');
@@ -31,12 +31,12 @@ const char* ExtractFileName(const char* _path) {
     }
 }
 
-void ExtractFunctionName(const char* _func, char* _func_ret, int _len) {
+void ExtractFunctionName(const char *_func, char *_func_ret, int _len) {
     if (NULL == _func)return;
     
-    const char* start = _func;
-    const char* end = NULL;
-    const char* pos = _func;
+    const char *start = _func;
+    const char *end = NULL;
+    const char *pos = _func;
     
     while ('\0' != *pos) {
         if (NULL == end && ' ' == *pos) {
@@ -73,7 +73,7 @@ void ExtractFunctionName(const char* _func, char* _func_ret, int _len) {
     _func_ret[len] = '\0';
 }
 
-void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID, intmax_t nMainTID, const char *pFileName, int nLineNumber, const char *pFuncName, struct timeval *pTimeval, const char *pBody) {
+void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID, intmax_t nMainTID, const char *pTag, const char *pFileName, int nLineNumber, const char *pFuncName, struct timeval *pTimeval, const char *pBody) {
     
     static const char *pLevel=NULL;
     switch (eLogType) {
@@ -91,7 +91,7 @@ void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID
             break;
     }
     
-    const char* filename = ExtractFileName(pFileName);
+    const char *filename = ExtractFileName(pFileName);
     char strFuncName [128] = {0};
     ExtractFunctionName(pFuncName, strFuncName, sizeof(strFuncName));
     
@@ -112,9 +112,8 @@ void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID
 #endif
     }
     
-    // _log.AllocWrite(30*1024, false);
-    snprintf(pBuf, 1024, "[%s][%" PRIdMAX ":%" PRIdMAX "%s][%s][%-30s, %-24s, %3d] %s",
+    snprintf(pBuf, 1024, "[%s][%" PRIdMAX ":%02" PRIdMAX "%s][%s][%s][%s, %s, %03d] %s",
                        temp_time,
-             nPID, nTID, nTID == nMainTID ? "*" : "", pLevel,
+             nPID, nTID, nTID == nMainTID ? "*" : "", pLevel, pTag ? pTag : "",
                        filename, strFuncName, nLineNumber, pBody);
 }
