@@ -7,7 +7,7 @@
 //
 
 #include "BAgent.h"
-#include "BigWriter.h"
+#include "BFileWriter.h"
 
 static BigWriter *bigWriter = NULL;
 

@@ -6,7 +6,7 @@
 //  Copyright © 2017年 Netease. All rights reserved.
 //
 
-#include "BigWriter.h"
+#include "BFileWriter.h"
 #include "LDXlog/appender.h"
 
 #import <sys/xattr.h>

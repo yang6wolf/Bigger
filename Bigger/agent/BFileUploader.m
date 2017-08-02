@@ -6,7 +6,7 @@
 //  Copyright © 2017年 王仕杰. All rights reserved.
 //
 
-#import "BiggerFileUploader.h"
+#import "BFileUploader.h"
 
 static NSString * const LeanCloudID = @"LVQdV4HdaL5WiQAbycKuMhot-gzGzoHsz";
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";

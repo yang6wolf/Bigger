@@ -7,7 +7,7 @@
 //
 
 #include "BAgent.h"
-#include "BiggerFileUploader.h"
+#include "BFileUploader.h"
 
 void runCommand(const char * identifier) {
     [BiggerFileUploader uploadFileWithPath:@""
