@@ -16,13 +16,20 @@
 {
     printLogToConsole(0xFFFFFFFF, 1);
     
-    ILOGD(3==3, "Have a try %s", "!~");
+    ILOGD(1==1, "Demonstration of %s ", "ILOG");
+    
+    CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
+    
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
     initBigWriter([logPath UTF8String], "LDPM", false, false);
     NSLog(@"logPath : %@", logPath);
 //    LOGE("启动完成!");
+    
+    LOGE("%@", launchOptions);
+    
+    
     
     // Override point for customization after application launch.
     return YES;
