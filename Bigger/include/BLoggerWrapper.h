@@ -15,32 +15,47 @@
 extern "C" {
 #endif
 
-    
-void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName, int nLineNumber, const char *pFuncName, const char *pFormat, ...);
-
+//default implementation
 #ifndef MODULE
 #define MODULE "undefine"
 #endif
     
+
+void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName, int nLineNumber, const char *pFuncName, const char *pFormat, ...);
+    
 #define LOGD(fmt, ...) WriteLog(B_LOG_TYPE_DEBUG, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
-#define LOGI(fmt, ...) WriteLog(B_LOG_TYPE_INFO, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
+#define LOGI(fmt, ...) WriteLog(B_LOG_TYPE_INFO,  MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define LOGE(fmt, ...) WriteLog(B_LOG_TYPE_ERROR, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
     
-
+    
 #define ILOGD(s, fmt, ...) \
     if(s) {\
-        WriteLog(B_LOG_TYPE_DEBUG, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);\
+        LOGD(fmt, ##__VA_ARGS__);\
     }
 
 #define ILOGI(s, fmt, ...) \
     if(s) {\
-        WriteLog(B_LOG_TYPE_INFO, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);\
+        LOGI(fmt, ##__VA_ARGS__);\
     }
 
 #define ILOGE(s, fmt, ...) \
     if(s) {\
-        WriteLog(B_LOG_TYPE_ERROR, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__);\
+        LOGE(fmt, ##__VA_ARGS__);\
     }
+    
+#define CHECK(s, x) \
+    if(s) {\
+        x;\
+    }
+    
+    
+#if defined(__APPLE__) && defined(__MACH__)
+#import<Foundation/Foundation.h>
+
+#define NSCHAR(fmt, ...) ([[NSString stringWithFormat:fmt, ##__VA_ARGS__, nil] UTF8String])
+#define NSLOGD(fmt, ...) LOGD(NSCHAR(fmt, ##__VA_ARGS__), ##__VA_ARGS__)
+
+#endif
 
     
 #if defined(__cplusplus)

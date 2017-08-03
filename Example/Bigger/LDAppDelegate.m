@@ -16,13 +16,30 @@
 {
     printLogToConsole(0xFFFFFFFF, 1);
     
-    ILOGD(3==3, "Have a try %s", "!~");
+    ILOGD(1==1, "Demonstration of %s ", "ILOG");
+    
+    CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
+    
+    NSArray *testArray=[NSArray arrayWithObjects:@"Shanghai",@"Beijing",@"Guangzhou",@"New York",@"Paris", nil];
+    
+    LOGD(NSCHAR(@"testArr is %@", testArray));
+    NSLOGD(@"testArr is %@", testArray);
+    CHECK(1==1, NSLOGD(@"testArr is %@", testArray));
+    
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    initStatisticsMonitor();
+    
+#warning StatisticsMonitor Closed
+//    initStatisticsMonitor();
+    
+    
     initBigWriter([logPath UTF8String], "LDPM", false, false);
     NSLog(@"logPath : %@", logPath);
 //    LOGE("启动完成!");
+    
+    LOGE("%@", launchOptions);
+    
+    
     
     // Override point for customization after application launch.
     return YES;
