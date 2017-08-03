@@ -29,11 +29,15 @@
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
+#warning StatisticsMonitor Closed
+//    initStatisticsMonitor();
+    
+    
     openBigWriter([logPath UTF8String], "LDPM", false, false);
     NSLog(@"logPath : %@", logPath);
-    LOGE("启动完成!");
+//    LOGE("启动完成!");
     
-    LOGI("%@", launchOptions);
+    LOGE("%@", launchOptions);
     
     
     
