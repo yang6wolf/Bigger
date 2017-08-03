@@ -20,6 +20,12 @@
     
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
+    NSArray *testArray=[NSArray arrayWithObjects:@"Shanghai",@"Beijing",@"Guangzhou",@"New York",@"Paris", nil];
+    
+    LOGD(NSCHAR(@"testArr is %@", testArray));
+    NSLOGD(@"testArr is %@", testArray);
+    CHECK(1==1, NSLOGD(@"testArr is %@", testArray));
+    
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
