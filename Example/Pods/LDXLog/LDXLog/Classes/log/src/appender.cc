@@ -47,6 +47,7 @@
 
 #include <string>
 #include <algorithm>
+#include <codecvt>
 
 #include "boost/bind.hpp"
 #include "boost/iostreams/device/mapped_file.hpp"
@@ -476,9 +477,20 @@ static bool __openlogfile(const std::string& _log_dir) {
 #endif
         return NULL != sg_logfile;
     }
+    
+    bool fileFlag = false;
+    if (!mars_boost::filesystem::exists(logfilepath)) {
+        fileFlag = true;
+    }
 
     sg_logfile = fopen(logfilepath, "ab");
-
+    
+    if (sg_logfile != NULL && fileFlag) {
+        char u8_byte_str[3]={(char)0xEF, (char)0xBB, (char)0xBF};
+        if (!fwrite(u8_byte_str, 1, sizeof(u8_byte_str), sg_logfile))
+            printf("write BOM error!!!");
+    }
+    
 	if (NULL == sg_logfile) {
         __writetips2console("open file error:%d %s, path:%s", errno, strerror(errno), logfilepath);
     }
@@ -912,7 +924,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
         if (use_mmap && sg_mmmap_file.is_open())  CloseMmapFile(sg_mmmap_file);
         return;
     }
-    
+
     
     AutoBuffer buffer;
     sg_log_buff->Flush(buffer);
@@ -927,7 +939,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     char mark_info[512] = {0};
     get_mark_info(mark_info, sizeof(mark_info));
     
-    if (buffer.Ptr()) {
+    if (buffer.Ptr() && !buffer.Empty()) {
         __writetips2file("~~~~~ begin of mmap ~~~~~\n");
         __log2file(buffer.Ptr(), buffer.Length());
         __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);

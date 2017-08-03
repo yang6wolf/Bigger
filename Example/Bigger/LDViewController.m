@@ -24,7 +24,7 @@
     
     printLogToConsole(B_LOG_TYPE_ERROR | B_LOG_TYPE_ERROR, 1);
     
-    LOGE("界面加载完成！");
+    LOGI("界面加载完成！");
     
     runCommand("identifier");
 }
@@ -35,8 +35,7 @@
     // Dispose of any resources that can be recreated.
 }
 - (IBAction)testButtonDemo:(UIButton *)sender {
-    LOGE("button1 test");
-    flushBigWriter();
+    LOGI("button1 test");
 }
 
 @end

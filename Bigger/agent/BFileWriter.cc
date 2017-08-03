@@ -66,11 +66,13 @@ void BigWriter::close() {
 }
 
 void BigWriter::flush() {
-    appender_flush();
+    if (isRegister)
+        appender_flush();
 }
 
 void BigWriter::syncFlush() {
-    appender_flush_sync();
+    if (isRegister)
+        appender_flush_sync();
 }
 
 const char* BigWriter::getPath() {

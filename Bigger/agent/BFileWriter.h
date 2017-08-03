@@ -34,8 +34,6 @@ public:
     }
     
     virtual ~BigWriter() {
-        delete logPath;
-        delete prefix;
     }
 private:
     static const char *logPath;

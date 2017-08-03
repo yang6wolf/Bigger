@@ -179,7 +179,6 @@ void LogBuffer::__Clear() {
     remain_nocrypt_len_ = 0;
 }
 
-
 void LogBuffer::__Fix() {
     if (is_crypt_) {
         uint32_t raw_log_len = 0;
