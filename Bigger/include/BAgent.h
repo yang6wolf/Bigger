@@ -17,6 +17,7 @@ void printLogToConsole(int nType, int bEnable);
 
 void initBigWriter(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt);
 void initBigWriterWithType(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt, int nType);
+void initStatisticsMonitor();
 void openBigWriter();
 void openBigWriterWithType(int nType);
 void closeBigWriter();
@@ -24,6 +25,8 @@ void flushBigWriter();
 void syncFlushBigWriter();
     
 void runCommand(const char * identifier);
+    
+
 
 #if defined(__cplusplus)
 }

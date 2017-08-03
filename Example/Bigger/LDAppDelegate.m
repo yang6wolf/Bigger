@@ -19,7 +19,7 @@
     ILOGD(3==3, "Have a try %s", "!~");
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    
+    initStatisticsMonitor();
     initBigWriter([logPath UTF8String], "LDPM", false, false);
     NSLog(@"logPath : %@", logPath);
 //    LOGE("启动完成!");
