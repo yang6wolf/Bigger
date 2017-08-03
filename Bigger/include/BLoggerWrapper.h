@@ -49,11 +49,11 @@ void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName,
     }
     
     
-#if defined(__APPLE__) && defined(__MACH__)
+#ifdef __OBJC__
 #import<Foundation/Foundation.h>
 
 #define NSCHAR(fmt, ...) ([[NSString stringWithFormat:fmt, ##__VA_ARGS__, nil] UTF8String])
-#define NSLOGD(fmt, ...) LOGD(NSCHAR(fmt, ##__VA_ARGS__), ##__VA_ARGS__)
+#define NSLOGD(fmt, ...) LOGD(NSCHAR(fmt, ##__VA_ARGS__))
 
 #endif
 

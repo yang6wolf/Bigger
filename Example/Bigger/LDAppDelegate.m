@@ -17,7 +17,6 @@
     printLogToConsole(0xFFFFFFFF, 1);
     
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
-    
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
     NSArray *testArray=[NSArray arrayWithObjects:@"Shanghai",@"Beijing",@"Guangzhou",@"New York",@"Paris", nil];
