@@ -941,7 +941,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     
     if (buffer.Ptr() && !buffer.Empty()) {
         __writetips2file("~~~~~ begin of mmap ~~~~~\n");
-        __log2file(buffer.Ptr(), buffer.Length());
+        __log2file(buffer.Ptr(), strlen((char*)buffer.Ptr()));
         __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
     }
     
