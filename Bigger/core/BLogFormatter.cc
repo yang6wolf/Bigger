@@ -86,6 +86,9 @@ void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID
         case B_LOG_TYPE_ERROR:
             pLevel="E";
             break;
+        case B_LOG_TYPE_FATAL:
+            pLevel="F";
+            break;
         default:
             pLevel="E";
             break;

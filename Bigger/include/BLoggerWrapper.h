@@ -26,6 +26,7 @@ void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName,
 #define LOGD(fmt, ...) WriteLog(B_LOG_TYPE_DEBUG, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define LOGI(fmt, ...) WriteLog(B_LOG_TYPE_INFO,  MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define LOGE(fmt, ...) WriteLog(B_LOG_TYPE_ERROR, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
+#define LOGF(fmt, ...) WriteLog(B_LOG_TYPE_FATAL, MODULE, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
     
     
 #define ILOGD(s, fmt, ...) \
@@ -43,6 +44,12 @@ void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName,
         LOGE(fmt, ##__VA_ARGS__);\
     }
     
+#define ILOGF(s, fmt, ...) \
+    if(s) {\
+        LOGF(fmt, ##__VA_ARGS__);\
+    }
+  
+    
 #define CHECK(s, x) \
     if(s) {\
         x;\
@@ -53,7 +60,11 @@ void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName,
 #import<Foundation/Foundation.h>
 
 #define NSCHAR(fmt, ...) ([[NSString stringWithFormat:fmt, ##__VA_ARGS__, nil] UTF8String])
+
 #define NSLOGD(fmt, ...) LOGD(NSCHAR(fmt, ##__VA_ARGS__))
+#define NSLOGI(fmt, ...) LOGI(NSCHAR(fmt, ##__VA_ARGS__))
+#define NSLOGE(fmt, ...) LOGE(NSCHAR(fmt, ##__VA_ARGS__))
+#define NSLOGF(fmt, ...) LOGF(NSCHAR(fmt, ##__VA_ARGS__))
 
 #endif
 
