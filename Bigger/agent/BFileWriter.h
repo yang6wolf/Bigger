@@ -30,7 +30,7 @@ public:
     bool getRegister() {return isRegister;};
     
     BigWriter() {
-        _MonitorType = B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
+        _MonitorType = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
     }
     
     virtual ~BigWriter() {

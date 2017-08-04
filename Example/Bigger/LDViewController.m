@@ -36,6 +36,7 @@
 }
 - (IBAction)testButtonDemo:(UIButton *)sender {
     LOGI("button1 test");
+    LOGF("fatal test");
 }
 
 @end

@@ -20,9 +20,9 @@ void openBigWriter(const char *_logPath, const char *_prefix, bool _isCompress, 
     }
     
 #if DEBUG
-    bigWriter->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
+    bigWriter->setMonitorType(B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
 #else
-    bigWriter->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO);
+    bigWriter->setMonitorType(B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO);
 #endif
     
     if (bigWriter->isPathNull())

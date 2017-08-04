@@ -25,9 +25,13 @@ bool BigWriter::isPathNull() {
 
 void BigWriter::Callback(BLogType eLogType, const char *pLog) {
     switch (eLogType) {
-        case B_LOG_TYPE_ERROR:
+        case B_LOG_TYPE_FATAL:
             bigger_appender(pLog);
             flush();
+        break;
+        
+        case B_LOG_TYPE_ERROR:
+            bigger_appender(pLog);
         break;
         
         case B_LOG_TYPE_INFO:
