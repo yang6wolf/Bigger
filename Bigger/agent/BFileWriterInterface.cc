@@ -17,8 +17,13 @@ extern void __removeListener();
 void openBigWriter(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt) {
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
-        bigWriter->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
     }
+    
+#if DEBUG
+    bigWriter->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
+#else
+    bigWriter->setMonitorType(B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO);
+#endif
     
     if (bigWriter->isPathNull())
         bigWriter->init(_logPath, _prefix, _isCompress, _isCrypt);

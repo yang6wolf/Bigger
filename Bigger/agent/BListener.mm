@@ -24,12 +24,12 @@
 }
 
 - (void)addBackgroundListener {
-    [[NSNotificationCenter defaultCenter] addObserver:[[self class] sharedInstanced] selector:@selector(applicationDidEnterBackground:)
+    [[NSNotificationCenter defaultCenter] addObserver:[[self class] sharedInstanced] selector:@selector(flushForDidEnterBackground:)
                                                  name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
 - (void)addTerminateListener {
-    [[NSNotificationCenter defaultCenter] addObserver:[[self class] sharedInstanced] selector:@selector(applicationWillTerminate:)
+    [[NSNotificationCenter defaultCenter] addObserver:[[self class] sharedInstanced] selector:@selector(flushForWillTerminate:)
                                                  name:UIApplicationWillTerminateNotification object:nil];
 }
     
@@ -41,13 +41,13 @@
     [[NSNotificationCenter defaultCenter] removeObserver:[[self class] sharedInstanced] name:UIApplicationWillTerminateNotification object:nil];
 }
 
-- (void)applicationDidEnterBackground:(NSNotification *)notification
+- (void)flushForDidEnterBackground:(NSNotification *)notification
 {
     BigWriter tempWriter;
     tempWriter.flush();
 }
     
-- (void)applicationWillTerminate:(NSNotification *)notification
+- (void)flushForWillTerminate:(NSNotification *)notification
 {
     BigWriter tempWriter;
     tempWriter.flush();

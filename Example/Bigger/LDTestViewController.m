@@ -25,7 +25,7 @@
     // Dispose of any resources that can be recreated.
 }
 - (IBAction)testButtonDemo:(UIButton *)sender {
-    LOGI("button2 test");
+    LOGD("button2 test");
 }
 
 /*
