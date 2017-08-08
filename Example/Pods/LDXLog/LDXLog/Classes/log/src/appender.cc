@@ -478,7 +478,7 @@ static bool __openlogfile(const std::string& _log_dir) {
         return NULL != sg_logfile;
     }
     
-    bool fileFlag = false;
+    bool fileFlag = false;  //当日志文件不存在时为true，此时新建的日志文件要加上BOM头。
     if (!mars_boost::filesystem::exists(logfilepath)) {
         fileFlag = true;
     }
@@ -886,7 +886,7 @@ static void get_mark_info(char* _info, size_t _infoLen) {
 	snprintf(_info, _infoLen, "[%" PRIdMAX ",%" PRIdMAX "][%s]", xlogger_pid(), xlogger_tid(), tmp_time);
 }
 
-void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, bool _is_compress, bool _is_crypt, const char* _pub_key) {
+void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, bool _is_compress, const char* _pub_key) {
     assert(_dir);
     assert(_nameprefix);
     
@@ -912,11 +912,11 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     
     bool use_mmap = false;
     if (OpenMmapFile(mmap_file_path, kBufferBlockLength, sg_mmmap_file))  {
-        sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, _is_compress, _is_crypt, _pub_key);
+        sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, _is_compress, _pub_key == NULL ? false : true, _pub_key);
         use_mmap = true;
     } else {
         char* buffer = new char[kBufferBlockLength];
-        sg_log_buff = new LogBuffer(buffer, kBufferBlockLength, _is_compress, _is_crypt, _pub_key);
+        sg_log_buff = new LogBuffer(buffer, kBufferBlockLength, _is_compress, _pub_key == NULL ? false : true, _pub_key);
         use_mmap = false;
     }
     
@@ -941,7 +941,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     
     if (buffer.Ptr() && !buffer.Empty()) {
         __writetips2file("~~~~~ begin of mmap ~~~~~\n");
-        __log2file(buffer.Ptr(), strlen((char*)buffer.Ptr()));
+        __log2file(buffer.Ptr(), buffer.Length());
         __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
     }
     
@@ -987,7 +987,7 @@ void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir,
         Thread(boost::bind(&__move_old_files, _cachedir, _logdir, std::string(_nameprefix))).start_after(3 * 60 * 1000);
     }
     
-    appender_open(_mode, _logdir.c_str(), _nameprefix, true, true, _pub_key);
+    appender_open(_mode, _logdir.c_str(), _nameprefix, true, _pub_key);
     
 }
 

@@ -42,12 +42,16 @@ bool LogBuffer::GetPeriodLogs(const char* _log_path, int _begin_hour, int _end_h
 LogBuffer::LogBuffer(void* _pbuffer, size_t _len, bool _isCompress, bool _isCrypt, const char* _pubkey)
 : is_compress_(_isCompress), is_crypt_(_isCrypt), log_crypt_(new LogCrypt(_pubkey)), remain_nocrypt_len_(0) {
     buff_.Attach(_pbuffer, _len);
-    if (is_crypt_) {
+    if (is_crypt_ || is_compress_) {    //压缩时不管加不加密，都要用到log_crypt里面的方法。
         __Fix();
     }
 
     if (is_compress_) {
         memset(&cstream_, 0, sizeof(cstream_));
+    }
+    
+    if (!is_crypt_ && !is_compress_) {
+        buff_.Length(strlen((char*)_pbuffer), strlen((char*)_pbuffer));
     }
 }
 
@@ -70,11 +74,11 @@ void LogBuffer::Flush(AutoBuffer& _buff) {
         deflateEnd(&cstream_);
     }
 
-    if (is_crypt_ && log_crypt_->GetLogLen((char*)buff_.Ptr(), buff_.Length()) == 0){
+    if ((is_crypt_ || is_compress_) && log_crypt_->GetLogLen((char*)buff_.Ptr(), buff_.Length()) == 0){
         __Clear();
         return;
     }
-    
+     
     __Flush();
     _buff.Write(buff_.Ptr(), buff_.Length());
     __Clear();
@@ -84,13 +88,14 @@ bool LogBuffer::Write(const void* _data, size_t _inputlen, AutoBuffer& _out_buff
     if (NULL == _data || 0 == _inputlen) {
         return false;
     }
-    
-    if (is_crypt_) {
+    if (is_crypt_ || is_compress_) {    //压缩时不管加不加密，都要调用log_crypt里面的方法。
         log_crypt_->CryptSyncLog((char*)_data, _inputlen, _out_buff);
     }
     else {
         _out_buff.AllocWrite(_inputlen);
+        
         memcpy((char*)_out_buff.Ptr(), _data, _inputlen);
+        log_crypt_->SetTailerInfo((char*)_out_buff.Ptr() + _inputlen);
     }
     return true;
 }
@@ -124,8 +129,8 @@ bool LogBuffer::Write(const void* _data, size_t _length) {
     } else {
         buff_.Write(_data, _length);
     }
-
-    if (is_crypt_) {
+    
+    if (is_crypt_ || is_compress_) {    //压缩时不管加不加密，都要调用log_crypt里面的方法。
         before_len -= remain_nocrypt_len_;
     
         AutoBuffer out_buffer;
@@ -139,6 +144,7 @@ bool LogBuffer::Write(const void* _data, size_t _length) {
    
         log_crypt_->UpdateLogLen((char*)buff_.Ptr(), (uint32_t)(out_buffer.Length() - last_remain_len));
     }
+    
     return true;
 }
 
@@ -156,17 +162,18 @@ bool LogBuffer::__Reset() {
         }
         
     }
-    if (is_crypt_) {
+    
+    if (is_crypt_ || is_compress_) {    //压缩时不管加不加密，都要调用log_crypt里面的方法。
         log_crypt_->SetHeaderInfo((char*)buff_.Ptr(), is_compress_);
         buff_.Length(log_crypt_->GetHeaderLen(), log_crypt_->GetHeaderLen());
     }
+    
     return true;
 }
 
 void LogBuffer::__Flush() {
-    if (is_crypt_) {
+    if (is_crypt_ || is_compress_) {    //压缩时不管加不加密，都要调用log_crypt里面的方法。
         assert(buff_.Length() >= log_crypt_->GetHeaderLen());
-    
         log_crypt_->UpdateLogHour((char*)buff_.Ptr());
         log_crypt_->SetTailerInfo((char*)buff_.Ptr() + buff_.Length());
         buff_.Length(buff_.Length() + log_crypt_->GetTailerLen(), buff_.Length() + log_crypt_->GetTailerLen());
@@ -179,15 +186,15 @@ void LogBuffer::__Clear() {
     remain_nocrypt_len_ = 0;
 }
 
+
 void LogBuffer::__Fix() {
-    if (is_crypt_) {
-        uint32_t raw_log_len = 0;
-        bool is_compress = false;
-        if (log_crypt_->Fix((char*)buff_.Ptr(), buff_.Length(), is_compress, raw_log_len)) {
-            buff_.Length(raw_log_len + log_crypt_->GetHeaderLen(), raw_log_len + log_crypt_->GetHeaderLen());
-        } else {
-            buff_.Length(0, 0);
-        }
+    uint32_t raw_log_len = 0;
+    bool is_compress = false;
+    if (log_crypt_->Fix((char*)buff_.Ptr(), buff_.Length(), is_compress, raw_log_len)) {
+        buff_.Length(raw_log_len + log_crypt_->GetHeaderLen(), raw_log_len + log_crypt_->GetHeaderLen());
+    } else {
+        buff_.Length(0, 0);
     }
+
 }
 

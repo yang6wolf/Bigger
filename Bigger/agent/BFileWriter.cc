@@ -62,7 +62,8 @@ void BigWriter::init(const char *_logPath, const char *_prefix, bool _isCompress
 }
 
 void BigWriter::open() {
-    appender_open(kAppednerAsync, logPath, prefix, isCompress, isCrypt, NULL);
+    const char *pub_key = "c6909c84d9099761b8e7dd91615492b81fc1f81df563ad208564ba304d94f0146d10d7cc163de76fa8ecc3c0696444e855ec0fa68c05f00c84b49e18abe67c19";
+    appender_open(kAppednerAsync, logPath, prefix, isCompress, isCrypt == false ? NULL : pub_key);
 }
 
 void BigWriter::close() {
