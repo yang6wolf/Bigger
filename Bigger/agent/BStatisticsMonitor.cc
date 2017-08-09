@@ -19,7 +19,7 @@ void initStatisticsMonitor() {
 }
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
-    assert(eLogType & B_LOG_TYPE_ERROR);
+    assert(eLogType & B_LOG_TYPE_FATAL);
     reportStatisticsMessage(pLog);
 }
 
