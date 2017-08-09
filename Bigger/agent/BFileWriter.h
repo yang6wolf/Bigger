@@ -3,11 +3,11 @@
 //  Bigger
 //
 //  Created by 杨志超 on 2017/7/27.
-//  Copyright © 2017年 Netease. All rights reserved.
+//  Copyright © 2017年 NetEase. All rights reserved.
 //
 
-#ifndef BigEyesMonitor_h
-#define BigEyesMonitor_h
+#ifndef BigWriter_h
+#define BigWriter_h
 
 #include <stdio.h>
 #include "BLogger.h"
@@ -16,7 +16,7 @@ class BigWriter : public BLogMonitor {
 public:
     void Callback(BLogType eLogType, const char *pLog);
     
-    void init(const char *_logPath, const char *_prefix, bool isCompress, bool isCrypt);
+    void init(const char *_logPath, bool isCompress, bool isCrypt);
     void open();
     void close();
     void flush();
@@ -28,6 +28,8 @@ public:
     void setMonitorType(int _type) {_MonitorType = _type;};
     void setRegister(bool _isRegister) {isRegister = _isRegister;};
     bool getRegister() {return isRegister;};
+    bool getCrypt() {return isCrypt;};
+    bool getCompress() {return isCompress;};
     
     BigWriter() {
         _MonitorType = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
@@ -37,9 +39,8 @@ public:
     }
 private:
     static const char *logPath;
-    static const char *prefix;
     static bool isRegister;
     static bool isCompress;
     static bool isCrypt;
 };
-#endif /* BigEyesMonitor_h */
+#endif /* BigWriter_h */

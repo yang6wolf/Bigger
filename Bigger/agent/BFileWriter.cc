@@ -3,7 +3,7 @@
 //  Bigger
 //
 //  Created by 杨志超 on 2017/7/27.
-//  Copyright © 2017年 Netease. All rights reserved.
+//  Copyright © 2017年 NetEase. All rights reserved.
 //
 
 #include "BFileWriter.h"
@@ -12,7 +12,6 @@
 #import <sys/xattr.h>
 
 const char* BigWriter::logPath = NULL;
-const char* BigWriter::prefix = NULL;
 bool BigWriter::isRegister = false;
 bool BigWriter::isCompress = false;
 bool BigWriter::isCrypt = false;
@@ -47,9 +46,8 @@ void BigWriter::Callback(BLogType eLogType, const char *pLog) {
     }
 }
 
-void BigWriter::init(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt) {
+void BigWriter::init(const char *_logPath, bool _isCompress, bool _isCrypt) {
     logPath = _logPath;
-    prefix = _prefix;
     isCompress = _isCompress;
     isCrypt = _isCrypt;
     

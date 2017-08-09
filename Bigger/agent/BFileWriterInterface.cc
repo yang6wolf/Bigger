@@ -14,7 +14,7 @@ static BigWriter *bigWriter = NULL;
 extern void __addListener();
 extern void __removeListener();
 
-void openBigWriter(const char *_logPath, const char *_prefix, bool _isCompress, bool _isCrypt) {
+void openBigWriter(const char *_logPath) {
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
     }
@@ -26,7 +26,7 @@ void openBigWriter(const char *_logPath, const char *_prefix, bool _isCompress, 
 #endif
     
     if (bigWriter->isPathNull())
-        bigWriter->init(_logPath, _prefix, _isCompress, _isCrypt);
+        bigWriter->init(_logPath, true, true);
     else {
         printf("BigWriter has already been opened!\n");
         return;

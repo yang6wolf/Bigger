@@ -3,7 +3,7 @@
 //  Bigger
 //
 //  Created by Edward on 11/7/17.
-//  Copyright © 2017年 Netease. All rights reserved.
+//  Copyright © 2017年 NetEase. All rights reserved.
 //
 
 #include "BLogger.h"
