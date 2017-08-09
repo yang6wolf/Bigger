@@ -70,7 +70,7 @@
 
 #include "log_buffer.h"
 
-#define LOG_EXT "log"
+#define LOG_EXT "plog"
 
 extern void log_formater(const XLoggerInfo* _info, const char* _logbody, PtrBuffer& _log);
 extern void ConsoleLog(const XLoggerInfo* _info, const char* _log);
@@ -117,6 +117,15 @@ static const long kMaxLogAliveTime = 10 * 24 * 60 * 60;	// 10 days in second
 static std::string sg_log_extra_msg;
 
 static boost::iostreams::mapped_file sg_mmmap_file;
+
+#define UNDEFINED_SIZE 2000000000
+#define MAX_SIZE 5242880
+#define MIN_SIZE 3145728
+
+static bool __is_crypt;
+static uintmax_t __file_size = UNDEFINED_SIZE;
+static const char kMagicAsyncStart ='\x07';
+static char* __logdata_temp = NULL;
 
 namespace {
 class ScopeErrno {
@@ -249,6 +258,16 @@ static void __make_logfilename(const timeval& _tv, const std::string& _logdir, c
     logfilepath += ".";
     logfilepath += _fileext;
     
+    strncpy(_filepath, logfilepath.c_str(), _len - 1);
+    _filepath[_len - 1] = '\0';
+}
+
+static void __get_logfilename(const std::string& _logdir, const char* _prefix, const std::string& _fileext, char* _filepath, unsigned int _len) {
+    std::string logfilepath = _logdir;
+    logfilepath += "/";
+    logfilepath += _prefix;
+    logfilepath += ".";
+    logfilepath += _fileext;
     strncpy(_filepath, logfilepath.c_str(), _len - 1);
     _filepath[_len - 1] = '\0';
 }
@@ -402,6 +421,61 @@ static void __writetips2console(const char* _tips_format, ...) {
     ConsoleLog(&info, tips_info);
 }
 
+static void __cutfile(const std::string& _log_dir) {
+    char logfilepath[1024] = {0};
+    __get_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
+    
+    if (sg_logfile != NULL) {
+        fclose(sg_logfile);
+        sg_logfile = NULL;
+    }
+    
+    FILE *file_temp = fopen(logfilepath, "rb");
+    uintmax_t cut_count = __file_size - MIN_SIZE;
+    fseek(file_temp, cut_count, SEEK_SET);
+    
+    if (__logdata_temp != NULL) {
+        delete[] __logdata_temp;
+        __logdata_temp = NULL;
+    }
+    
+    __logdata_temp = new char[MIN_SIZE];
+    
+    fread(__logdata_temp, 1, MIN_SIZE, file_temp);
+    fclose(file_temp);
+    
+    if (!mars_boost::filesystem::remove(logfilepath)) {
+        printf("remove file error when cut file!!!");
+        delete[] __logdata_temp;
+        return;
+    }
+    
+    sg_logfile = fopen(logfilepath, "ab");
+    __file_size = 0;
+    
+    char u8_byte_str[3] = {(char)0xEF, (char)0xBB, (char)0xBF};
+    if (!fwrite(u8_byte_str, 1, sizeof(u8_byte_str), sg_logfile))
+        printf("write BOM error when cut file!!!");
+    else
+        __file_size += sizeof(u8_byte_str);
+    
+    int _pos = 0;
+    if (__is_crypt) {
+        for (_pos = 0; _pos < MIN_SIZE; _pos++) {
+            if (__is_crypt && __logdata_temp[_pos] == kMagicAsyncStart)
+                break;
+        }
+    }
+    
+    fwrite(__logdata_temp + _pos, 1, MIN_SIZE - _pos, sg_logfile);
+    fclose(sg_logfile);
+    
+    __file_size += MIN_SIZE - _pos;
+    sg_logfile = NULL;
+    delete[] __logdata_temp;
+    __logdata_temp = NULL;
+}
+
 static bool __writefile(const void* _data, size_t _len, FILE* _file) {
     if (NULL == _file) {
         assert(false);
@@ -431,7 +505,7 @@ static bool __writefile(const void* _data, size_t _len, FILE* _file) {
 
         return false;
     }
-
+    __file_size += _len;
     return true;
 }
 
@@ -463,7 +537,7 @@ static bool __openlogfile(const std::string& _log_dir) {
     sg_current_dir = _log_dir;
 
     char logfilepath[1024] = {0};
-    __make_logfilename(tv, _log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath , 1024);
+    __get_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
 
     if (now_time < s_last_time) {
         sg_logfile = fopen(s_last_file_path, "ab");
@@ -478,23 +552,45 @@ static bool __openlogfile(const std::string& _log_dir) {
         return NULL != sg_logfile;
     }
     
-    bool fileFlag = false;  //当日志文件不存在时为true，此时新建的日志文件要加上BOM头。
-    if (!mars_boost::filesystem::exists(logfilepath)) {
-        fileFlag = true;
+    bool file_exist = false;  //表示文件打开之前是否存在。当日志文件存在时为true，为false时新建的日志文件要加上BOM头。
+    if (__file_size != UNDEFINED_SIZE || mars_boost::filesystem::exists(logfilepath)) {
+        file_exist = true;
     }
-
     sg_logfile = fopen(logfilepath, "ab");
     
-    if (sg_logfile != NULL && fileFlag) {
-        char u8_byte_str[3]={(char)0xEF, (char)0xBB, (char)0xBF};
+    if (sg_logfile != NULL && file_exist && __file_size == UNDEFINED_SIZE) {
+        char str_temp[4];
+        FILE *file_temp = fopen(logfilepath, "rb");
+        
+        if (!fread(str_temp, 1, sizeof(str_temp), file_temp)) {
+            printf("read file error!!!");
+        }
+        fclose(file_temp);
+        
+        if ((str_temp[3] == kMagicAsyncStart && !__is_crypt) || (str_temp[3] != kMagicAsyncStart && __is_crypt)) {
+            fclose(sg_logfile);
+            sg_logfile = NULL;
+            if (!mars_boost::filesystem::remove(logfilepath)) {
+                printf("remove file error!!!");
+            }
+            file_exist = false;
+            sg_logfile = fopen(logfilepath, "ab");
+        }
+        else
+            __file_size = mars_boost::filesystem::file_size(logfilepath);
+    }
+    
+    if (sg_logfile != NULL && !file_exist) {
+        char u8_byte_str[3] = {(char)0xEF, (char)0xBB, (char)0xBF};
         if (!fwrite(u8_byte_str, 1, sizeof(u8_byte_str), sg_logfile))
             printf("write BOM error!!!");
+        else
+            __file_size = sizeof(u8_byte_str);
     }
     
 	if (NULL == sg_logfile) {
         __writetips2console("open file error:%d %s, path:%s", errno, strerror(errno), logfilepath);
     }
-
 
     if (0 != s_last_time && (now_time - s_last_time) > (time_t)((now_tick - s_last_tick) / 1000 + 300)) {
 
@@ -542,8 +638,12 @@ static void __log2file(const void* _data, size_t _len) {
 	if (sg_cache_logdir.empty()) {
         if (__openlogfile(sg_logdir)) {
             __writefile(_data, _len, sg_logfile);
+            
             if (kAppednerAsync == sg_mode) {
                 __closelogfile();
+            }
+            if (__file_size > MAX_SIZE) {
+                __cutfile(sg_logdir);
             }
         }
         return;
@@ -577,6 +677,9 @@ static void __log2file(const void* _data, size_t _len) {
             write_sucess = __writefile(_data, _len, sg_logfile);
             if (kAppednerAsync == sg_mode) {
                 __closelogfile();
+            }
+            if (__file_size > MAX_SIZE) {
+                __cutfile(sg_logdir);
             }
         }
 
@@ -875,7 +978,6 @@ const char* xlogger_dump(const void* _dumpbuffer, size_t _len) {
     return (const char*)sg_tss_dumpfile.get();
 }
 
-
 static void get_mark_info(char* _info, size_t _infoLen) {
 	struct timeval tv;
 	gettimeofday(&tv, 0);
@@ -890,6 +992,11 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     assert(_dir);
     assert(_nameprefix);
     
+    if (_pub_key == NULL)
+        __is_crypt = false;
+    else
+        __is_crypt = true;
+    
     if (!sg_log_close) {
         __writetips2file("appender has already been opened. _dir:%s _nameprefix:%s", _dir, _nameprefix);
         return;
@@ -901,9 +1008,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     boost::filesystem::create_directories(_dir);
     tickcount_t tick;
     tick.gettickcount();
-    __del_timeout_file(_dir);
-    
-    tickcountdiff_t del_timeout_file_time = tickcount_t().gettickcount() - tick;
+    //__del_timeout_file(_dir);
     
     tick.gettickcount();
     
@@ -939,34 +1044,11 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     char mark_info[512] = {0};
     get_mark_info(mark_info, sizeof(mark_info));
     
-    if (buffer.Ptr() && !buffer.Empty()) {
-        __writetips2file("~~~~~ begin of mmap ~~~~~\n");
-        __log2file(buffer.Ptr(), buffer.Length());
-        __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
+    if (buffer.Ptr()) {
+        char kMagicMmapStart = *(char *)buffer.Ptr();
+        if ((kMagicMmapStart == kMagicAsyncStart && __is_crypt) || (kMagicMmapStart != kMagicAsyncStart && !__is_crypt))
+            __log2file(buffer.Ptr(), buffer.Length());
     }
-    
-    tickcountdiff_t get_mmap_time = tickcount_t().gettickcount() - tick;
-    
-    
-    char appender_info[728] = {0};
-    snprintf(appender_info, sizeof(appender_info), "^^^^^^^^^^" __DATE__ "^^^" __TIME__ "^^^^^^^^^^%s", mark_info);
-    
-    xlogger_appender(NULL, appender_info);
-    char logmsg[64] = {0};
-    snprintf(logmsg, sizeof(logmsg), "del time out files time: %" PRIu64, (int64_t)del_timeout_file_time);
-    xlogger_appender(NULL, logmsg);
-    
-    snprintf(logmsg, sizeof(logmsg), "get mmap time: %" PRIu64, (int64_t)get_mmap_time);
-    xlogger_appender(NULL, logmsg);
-    
-//    xlogger_appender(NULL, "MARS_URL: " MARS_URL);
-//    xlogger_appender(NULL, "MARS_PATH: " MARS_PATH);
-//    xlogger_appender(NULL, "MARS_REVISION: " MARS_REVISION);
-//    xlogger_appender(NULL, "MARS_BUILD_TIME: " MARS_BUILD_TIME);
-//    xlogger_appender(NULL, "MARS_BUILD_JOB: " MARS_TAG);
-    
-    snprintf(logmsg, sizeof(logmsg), "log appender mode:%d, use mmap:%d", (int)_mode, use_mmap);
-    xlogger_appender(NULL, logmsg);
     
     BOOT_RUN_EXIT(appender_close);
     

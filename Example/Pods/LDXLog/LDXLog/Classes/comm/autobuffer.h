@@ -99,7 +99,6 @@ class AutoBuffer {
     void* Detach(size_t* _plen = NULL);
 
     void Reset();
-    bool Empty();
 
   private:
     void __FitSize(size_t _len);

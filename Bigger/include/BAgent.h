@@ -15,7 +15,7 @@ extern "C" {
     
 void printLogToConsole(int nType, int bEnable);
 
-void openBigWriter(const char *_logPath, const char *_prefix);
+void openBigWriter(const char *_logPath);
 void closeBigWriter();
     
 void runCommand(const char * identifier);

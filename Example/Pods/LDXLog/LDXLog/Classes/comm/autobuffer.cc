@@ -293,16 +293,6 @@ void AutoBuffer::Reset() {
     capacity_ = 0;
 }
 
-bool AutoBuffer::Empty() {
-    if (parray_ != NULL) {
-        if (parray_[0] == '\0')
-            return true;
-        else
-            return false;
-    }
-    return true;
-}
-
 void AutoBuffer::__FitSize(size_t _len) {
     if (_len > capacity_) {
         size_t mallocsize = ((_len + malloc_unitsize_ -1)/malloc_unitsize_)*malloc_unitsize_ ;

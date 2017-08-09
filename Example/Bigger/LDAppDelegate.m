@@ -32,7 +32,7 @@
 //    initStatisticsMonitor();
     
     
-    openBigWriter([logPath UTF8String], "LDPM");
+    openBigWriter([logPath UTF8String]);
     NSLog(@"logPath : %@", logPath);
 //    LOGE("启动完成!");
     
