@@ -12,6 +12,7 @@
 
 + (void)uploadFileWithPath:(NSString * _Nonnull)path
                 identifier:(NSString * _Nullable)identifier
+               isEncrypted:(BOOL)encrypted
          completionHandler:(void (^ _Nullable)(NSError * _Nullable error))completion;
 
 @end

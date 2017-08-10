@@ -9,11 +9,21 @@
 #include "BAgent.h"
 #include "BFileUploader.h"
 
-void runCommand(const char * identifier) {
-    [BiggerFileUploader uploadFileWithPath:@""
+void uploadLog(const char * identifier) {
+    NSString* fixedPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log/dailylog.plog"];
+    
+    [BiggerFileUploader uploadFileWithPath:fixedPath
                                 identifier:[NSString stringWithCString:identifier
                                                               encoding:NSUTF8StringEncoding]
+                               isEncrypted:YES
                          completionHandler:^(NSError * _Nullable error) {
                              NSLog(@"Upload file error: %@", error);
                          }];
+}
+
+
+void runCommand(const char * command) {
+    if (1) {
+        uploadLog(command);
+    }
 }

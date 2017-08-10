@@ -18,25 +18,14 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
 + (void)uploadFileWithPath:(NSString *)path
                 identifier:(NSString *)identifier
+               isEncrypted:(BOOL)encrypted
          completionHandler:(void (^)(NSError * _Nullable error))completion {
     // loading data from path
     NSError* loadingDataError;
-    
-#warning Fixed path
-/*
- NSData* uploadData = [NSData dataWithContentsOfFile:path
-                                          options:0
-                                            error:&loadingDataError];
-*/
-    
-#if 1
-    NSDateFormatter* dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = @"yyyyMMdd";
-    NSString* fixedPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingFormat:@"/log/LDPM_%@.log", [dateFormatter stringFromDate:[NSDate date]]];
-    NSData* uploadData = [NSData dataWithContentsOfFile:fixedPath
+
+    NSData* uploadData = [NSData dataWithContentsOfFile:path
                                                 options:0
                                                   error:&loadingDataError];
-#endif
     
     if (loadingDataError) {
         if (completion) {
@@ -52,15 +41,22 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     NSString* dateString = [formatter stringFromDate:[NSDate date]];
     
     NSURLRequest* request;
+    NSString* contentType = @"text/plain; charset=utf-8";
+    NSString* nameExtension = @".log";
+    
+    if (encrypted) {
+        contentType = @"application/octet-stream";
+        nameExtension = @".plog";
+    }
     
     // generate URL request
     if (identifier) {
-        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@-%@.log", identifier, dateString]
-                           contentType:@"text/plain; charset=utf-8"
+        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@-%@%@", identifier, dateString, nameExtension]
+                           contentType:contentType
                             uploadData:uploadData];
     } else {
-        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@.log", dateString]
-                           contentType:@"text/plain; charset=utf-8"
+        request = [self requestWithURL:[NSString stringWithFormat:@"https://api.leancloud.cn/1.1/files/Bigger-%@%@", dateString, nameExtension]
+                           contentType:contentType
                             uploadData:uploadData];
     }
     
