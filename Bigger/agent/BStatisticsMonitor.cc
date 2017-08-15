@@ -8,7 +8,7 @@
 #include "BStatisticsMonitor.h"
 #include <assert.h>
 #include "BAgent.h"
-#import "BStatisticsReporter.h"
+#include "BStatisticsReporter.h"
 
 static BStatisticsMonitor* monitor = NULL;
 
