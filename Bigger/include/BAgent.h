@@ -21,7 +21,7 @@ void closeBigWriter();
 void runCommand(const char * identifier);
 
 // 启用Fatal日志实时上报
-void initStatisticsMonitor()
+void initStatisticsMonitor();
 
 #if defined(__cplusplus)
 }
