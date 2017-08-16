@@ -16,7 +16,7 @@ public:
     void Callback(BLogType eLogType, const char *pLog);
     
     BStatisticsMonitor() {
-        _MonitorType = B_LOG_TYPE_ERROR;
+        _MonitorType = B_LOG_TYPE_FATAL;
         regMonitor();
     }
 private:
