@@ -7,6 +7,7 @@
 //
 
 #import "BFileUploader.h"
+#import "Bigger.h"
 
 static NSString * const LeanCloudID = @"LVQdV4HdaL5WiQAbycKuMhot-gzGzoHsz";
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
@@ -31,6 +32,7 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
         if (completion) {
             completion(loadingDataError);
         }
+        NSLOGF(@"Loading data error. Path:(%@), errorDescription:(%@)", path, loadingDataError.localizedDescription);
         return;
     }
     
@@ -74,6 +76,8 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
                                                  [self associateNetlogWithObject:json[@"objectId"]
                                                                             name:identifier];
                                              }
+                                         } else {
+                                             NSLOGF(@"Upload file (leancloud) error. Error:(%@)", error);
                                          }
                                      }] resume];
 }
@@ -109,7 +113,7 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
                                       uploadData:bindingData];
     
     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
+        CHECK(error, NSLOGF(@"Binding class error. Error:(%@)", error));
     }];
     [task resume];
 }
