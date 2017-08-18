@@ -15,6 +15,8 @@ void uploadLog(const char * identifier) {
     
     BigWriter instance;
     
+    instance.syncFlush();
+    
     NSString* path = [[NSString stringWithCString:instance.getPath()
                                          encoding:NSUTF8StringEncoding] stringByAppendingPathComponent:@"dailylog.plog"];
     
