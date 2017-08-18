@@ -11,7 +11,7 @@
 
 #import <sys/xattr.h>
 
-const char* BigWriter::logPath = NULL;
+char* BigWriter::logPath = NULL;
 bool BigWriter::isRegister = false;
 bool BigWriter::isCompress = false;
 bool BigWriter::isCrypt = false;
@@ -47,7 +47,10 @@ void BigWriter::Callback(BLogType eLogType, const char *pLog) {
 }
 
 void BigWriter::init(const char *_logPath, bool _isCompress, bool _isCrypt) {
-    logPath = _logPath;
+    if (logPath == NULL) {
+        logPath = new char[strlen(_logPath)];
+        memcpy(logPath, _logPath, strlen(_logPath));
+    }
     isCompress = _isCompress;
     isCrypt = _isCrypt;
     

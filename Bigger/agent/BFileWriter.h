@@ -38,7 +38,7 @@ public:
     virtual ~BigWriter() {
     }
 private:
-    static const char *logPath;
+    static char *logPath;
     static bool isRegister;
     static bool isCompress;
     static bool isCrypt;

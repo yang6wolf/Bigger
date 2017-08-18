@@ -22,11 +22,11 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    printLogToConsole(B_LOG_TYPE_ERROR | B_LOG_TYPE_ERROR, 1);
+    //printLogToConsole(B_LOG_TYPE_ERROR | B_LOG_TYPE_ERROR, 1);
 
     LOGI("界面加载完成！");
     
-    runCommand("Bigger-Example");
+    //runCommand("Bigger-Example");
 }
 
 - (void)didReceiveMemoryWarning
@@ -36,7 +36,7 @@
 }
 - (IBAction)testButtonDemo:(UIButton *)sender {
     LOGI("button1 test");
-    LOGF("fatal test");
+    //LOGF("fatal test");
 }
 
 @end

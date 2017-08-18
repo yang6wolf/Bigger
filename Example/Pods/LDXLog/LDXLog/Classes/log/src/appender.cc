@@ -147,122 +147,7 @@ class ScopeErrno {
 
 }
 
-static std::string __make_logfilenameprefix(const timeval& _tv, const char* _prefix) {
-    time_t sec = _tv.tv_sec;
-    tm tcur = *localtime((const time_t*)&sec);
-    
-    char temp [64] = {0};
-    snprintf(temp, 64, "_%d%02d%02d", 1900 + tcur.tm_year, 1 + tcur.tm_mon, tcur.tm_mday);
-    
-    std::string filenameprefix = _prefix;
-    filenameprefix += temp;
-    
-    return filenameprefix;
-}
-
-static void __get_filenames_by_prefix(const std::string& _logdir, const std::string& _fileprefix, const std::string& _fileext, std::vector<std::string>& _filename_vec) {
-    
-    boost::filesystem::path path(_logdir);
-    if (!boost::filesystem::is_directory(path)) {
-        return;
-    }
-    
-    boost::filesystem::directory_iterator end_iter;
-    std::string filename;
-    
-    for (boost::filesystem::directory_iterator iter(path); iter != end_iter; ++iter) {
-        if (boost::filesystem::is_regular_file(iter->status())) {
-            filename = iter->path().filename().string();
-            if (strutil::StartsWith(filename, _fileprefix) && strutil::EndsWith(filename, _fileext)) {
-                _filename_vec.push_back(filename);
-            }
-        }
-    }
-}
-
-static void __get_filepaths_from_timeval(const timeval& _tv, const std::string& _logdir, const char* _prefix, const std::string& _fileext, std::vector<std::string>& _filepath_vec) {
-    
-    std::string fileprefix = __make_logfilenameprefix(_tv, _prefix);
-    std::vector<std::string> filename_vec;
-    __get_filenames_by_prefix(_logdir, fileprefix, _fileext, filename_vec);
-    
-    for (std::vector<std::string>::iterator iter = filename_vec.begin(); iter != filename_vec.end(); ++ iter) {
-        _filepath_vec.push_back(_logdir + "/" + (*iter));
-    }
-}
-
-static bool __string_compare_greater(const std::string& s1, const std::string& s2) {
-    if (s1.length() == s2.length()) {
-        return s1 > s2;
-    }
-    return s1.length() > s2.length();
-}
-
-static long __get_next_fileindex(const std::string& _fileprefix, const std::string& _fileext) {
-    
-    std::vector<std::string> filename_vec;
-    __get_filenames_by_prefix(sg_logdir, _fileprefix, _fileext, filename_vec);
-    if (!sg_cache_logdir.empty()) {
-        __get_filenames_by_prefix(sg_cache_logdir, _fileprefix, _fileext, filename_vec);
-    }
-    
-    long index = 0; // long is enought to hold all indexes in one day.
-    if (filename_vec.empty()) {
-        return index;
-    }
-    // high -> low
-    std::sort(filename_vec.begin(), filename_vec.end(), __string_compare_greater);
-    std::string last_filename = *(filename_vec.begin());
-    std::size_t ext_pos = last_filename.rfind("." + _fileext);
-    std::size_t index_len = ext_pos - _fileprefix.length();
-    if (index_len > 0) {
-        std::string index_str = last_filename.substr(_fileprefix.length(), index_len);
-        if (strutil::StartsWith(index_str, "_")) {
-            index_str = index_str.substr(1);
-        }
-        index = atol(index_str.c_str());
-    }
-    
-    uint64_t filesize = 0;
-    std::string logfilepath = sg_logdir + "/" + last_filename;
-    if (boost::filesystem::exists(logfilepath)) {
-        filesize += boost::filesystem::file_size(logfilepath);
-    }
-    if (!sg_cache_logdir.empty()) {
-        logfilepath = sg_cache_logdir + "/" + last_filename;
-        if (boost::filesystem::exists(logfilepath)) {
-            filesize += boost::filesystem::file_size(logfilepath);
-        }
-    }
-    return (filesize > sg_max_file_size) ? index + 1 : index;
-}
-
-static void __make_logfilename(const timeval& _tv, const std::string& _logdir, const char* _prefix, const std::string& _fileext, char* _filepath, unsigned int _len) {
-    
-    long index = 0;
-    std::string logfilenameprefix = __make_logfilenameprefix(_tv, _prefix);
-    if (sg_max_file_size > 0) {
-        index = __get_next_fileindex(logfilenameprefix, _fileext);
-    }
-    
-    std::string logfilepath = _logdir;
-    logfilepath += "/";
-    logfilepath += logfilenameprefix;
-    
-    if (index > 0) {
-        char temp[24] = {0};
-        snprintf(temp, 24, "_%ld", index);
-        logfilepath += temp;
-    }
-    
-    logfilepath += ".";
-    logfilepath += _fileext;
-    
-    strncpy(_filepath, logfilepath.c_str(), _len - 1);
-    _filepath[_len - 1] = '\0';
-}
-
-static void __get_logfilename(const std::string& _logdir, const char* _prefix, const std::string& _fileext, char* _filepath, unsigned int _len) {
+static void __make_logfilename(const std::string& _logdir, const char* _prefix, const std::string& _fileext, char* _filepath, unsigned int _len) {
     std::string logfilepath = _logdir;
     logfilepath += "/";
     logfilepath += _prefix;
@@ -393,7 +278,7 @@ static void __move_old_files(const std::string& _src_path, const std::string& _d
             continue;
         }
         
-        __make_logfilename(tv, _dest_path, sg_logfileprefix.c_str(), LOG_EXT, logfilepath , 1024);
+        __make_logfilename(_dest_path, sg_logfileprefix.c_str(), LOG_EXT, logfilepath , 1024);
         
         if (!__append_file(iter->path().string(), logfilepath)) {
             break;
@@ -423,7 +308,7 @@ static void __writetips2console(const char* _tips_format, ...) {
 
 static void __cutfile(const std::string& _log_dir) {
     char logfilepath[1024] = {0};
-    __get_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
+    __make_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
     
     if (sg_logfile != NULL) {
         fclose(sg_logfile);
@@ -462,7 +347,7 @@ static void __cutfile(const std::string& _log_dir) {
     int _pos = 0;
     if (__is_crypt) {
         for (_pos = 0; _pos < MIN_SIZE; _pos++) {
-            if (__is_crypt && __logdata_temp[_pos] == kMagicAsyncStart)
+            if (__logdata_temp[_pos] == kMagicAsyncStart)
                 break;
         }
     }
@@ -537,7 +422,7 @@ static bool __openlogfile(const std::string& _log_dir) {
     sg_current_dir = _log_dir;
 
     char logfilepath[1024] = {0};
-    __get_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
+    __make_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
 
     if (now_time < s_last_time) {
         sg_logfile = fopen(s_last_file_path, "ab");
@@ -653,7 +538,7 @@ static void __log2file(const void* _data, size_t _len) {
     gettimeofday(&tv, NULL);
     char logcachefilepath[1024] = {0};
 
-    __make_logfilename(tv, sg_cache_logdir, sg_logfileprefix.c_str(), LOG_EXT, logcachefilepath , 1024);
+    __make_logfilename(sg_cache_logdir, sg_logfileprefix.c_str(), LOG_EXT, logcachefilepath, 1024);
     
     if (boost::filesystem::exists(logcachefilepath) && __openlogfile(sg_cache_logdir)) {
         __writefile(_data, _len, sg_logfile);
@@ -661,9 +546,8 @@ static void __log2file(const void* _data, size_t _len) {
             __closelogfile();
         }
 
-
         char logfilepath[1024] = {0};
-        __make_logfilename(tv, sg_logdir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath , 1024);
+        __make_logfilename(sg_logdir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
         if (__append_file(logcachefilepath, logfilepath)) {
             if (kAppednerSync == sg_mode) {
                 __closelogfile();
@@ -678,9 +562,6 @@ static void __log2file(const void* _data, size_t _len) {
             if (kAppednerAsync == sg_mode) {
                 __closelogfile();
             }
-            if (__file_size > MAX_SIZE) {
-                __cutfile(sg_logdir);
-            }
         }
 
         if (!write_sucess) {
@@ -694,6 +575,9 @@ static void __log2file(const void* _data, size_t _len) {
                     __closelogfile();
                 }
             }
+        }
+        if (__file_size > MAX_SIZE) {
+            __cutfile(sg_logdir);
         }
     }
 
@@ -978,16 +862,6 @@ const char* xlogger_dump(const void* _dumpbuffer, size_t _len) {
     return (const char*)sg_tss_dumpfile.get();
 }
 
-static void get_mark_info(char* _info, size_t _infoLen) {
-	struct timeval tv;
-	gettimeofday(&tv, 0);
-	time_t sec = tv.tv_sec; 
-	struct tm tm_tmp = *localtime((const time_t*)&sec);
-	char tmp_time[64] = {0};
-	strftime(tmp_time, sizeof(tmp_time), "%Y-%m-%d %z %H:%M:%S", &tm_tmp);
-	snprintf(_info, _infoLen, "[%" PRIdMAX ",%" PRIdMAX "][%s]", xlogger_pid(), xlogger_tid(), tmp_time);
-}
-
 void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, bool _is_compress, const char* _pub_key) {
     assert(_dir);
     assert(_nameprefix);
@@ -1040,9 +914,6 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     sg_log_close = false;
     appender_setmode(_mode);
     lock.unlock();
-    
-    char mark_info[512] = {0};
-    get_mark_info(mark_info, sizeof(mark_info));
     
     if (buffer.Ptr()) {
         char kMagicMmapStart = *(char *)buffer.Ptr();
@@ -1097,12 +968,6 @@ void appender_flush_sync() {
 
 void appender_close() {
     if (sg_log_close) return;
-
-    char mark_info[512] = {0};
-    get_mark_info(mark_info, sizeof(mark_info));
-    char appender_info[728] = {0};
-    snprintf(appender_info, sizeof(appender_info), "$$$$$$$$$$" __DATE__ "$$$" __TIME__ "$$$$$$$$$$%s\n", mark_info);
-    xlogger_appender(NULL, appender_info);
 
     sg_log_close = true;
 
@@ -1170,40 +1035,4 @@ void appender_setExtraMSg(const char* _msg, unsigned int _len) {
     sg_log_extra_msg = std::string(_msg, _len);
 }
 
-bool appender_getfilepath_from_timespan(int _timespan, const char* _prefix, std::vector<std::string>& _filepath_vec) {
-    if (sg_logdir.empty()) return false;
 
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    tv.tv_sec -= _timespan * (24 * 60 * 60);
-
-    __get_filepaths_from_timeval(tv, sg_logdir, _prefix, LOG_EXT, _filepath_vec);
-    if (!sg_cache_logdir.empty()) {
-        __get_filepaths_from_timeval(tv, sg_cache_logdir, _prefix, LOG_EXT, _filepath_vec);
-    }
-    return true;
-}
-
-bool appender_make_logfile_name(int _timespan, const char* _prefix, std::vector<std::string>& _filepath_vec) {
-    if (sg_logdir.empty()) return false;
-    
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    tv.tv_sec -= _timespan * (24 * 60 * 60);
-    
-    char log_path[2048] = {0};
-    __make_logfilename(tv, sg_logdir, _prefix, LOG_EXT, log_path, sizeof(log_path));
-    
-    _filepath_vec.push_back(log_path);
-    
-    if (sg_cache_logdir.empty()) {
-        return true;
-    }
-    
-    memset(log_path, 0, sizeof(log_path));
-    __make_logfilename(tv, sg_cache_logdir, _prefix, LOG_EXT, log_path, sizeof(log_path));
-    
-    _filepath_vec.push_back(log_path);
-    
-    return true;
-}
