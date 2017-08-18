@@ -8,14 +8,20 @@
 
 #include "BAgent.h"
 #include "BFileUploader.h"
+#include "BFileWriter.h"
 
 void uploadLog(const char * identifier) {
     NSString* fixedPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log/dailylog.plog"];
     
-    [BiggerFileUploader uploadFileWithPath:fixedPath
+    BigWriter instance;
+    
+    NSString* path = [[NSString stringWithCString:instance.getPath()
+                                         encoding:NSUTF8StringEncoding] stringByAppendingPathComponent:@"dailylog.plog"];
+    
+    [BiggerFileUploader uploadFileWithPath:path
                                 identifier:[NSString stringWithCString:identifier
                                                               encoding:NSUTF8StringEncoding]
-                               isEncrypted:YES
+                               isEncrypted:instance.getCrypt()
                          completionHandler:^(NSError * _Nullable error) {
                              NSLog(@"Upload file error: %@", error);
                          }];

@@ -35,6 +35,7 @@
     @autoreleasepool
     {
         _flushTimer = [NSTimer scheduledTimerWithTimeInterval:FLUSH_TIME target:self selector:@selector(flushForTimer) userInfo:nil repeats:YES];
+        _flushTimer.tolerance = 5;
         [[NSRunLoop currentRunLoop] run];
     }
 }
