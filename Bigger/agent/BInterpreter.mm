@@ -11,22 +11,24 @@
 #include "BFileWriter.h"
 
 void uploadLog(const char * identifier) {
-    NSString* fixedPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log/dailylog.plog"];
+    dispatch_queue_t uploadQueue = dispatch_queue_create("Bigger.UploadQueue", DISPATCH_QUEUE_SERIAL);
     
-    BigWriter instance;
-    
-    instance.syncFlush();
-    
-    NSString* path = [[NSString stringWithCString:instance.getPath()
-                                         encoding:NSUTF8StringEncoding] stringByAppendingPathComponent:@"dailylog.plog"];
-    
-    [BiggerFileUploader uploadFileWithPath:path
-                                identifier:[NSString stringWithCString:identifier
-                                                              encoding:NSUTF8StringEncoding]
-                               isEncrypted:instance.getCrypt()
-                         completionHandler:^(NSError * _Nullable error) {
-                             NSLog(@"Upload file error: %@", error);
-                         }];
+    dispatch_async(uploadQueue, ^{
+        BigWriter instance;
+        
+        instance.syncFlush();
+        
+        NSString* path = [[NSString stringWithCString:instance.getPath()
+                                             encoding:NSUTF8StringEncoding] stringByAppendingPathComponent:@"dailylog.plog"];
+        
+        [BiggerFileUploader uploadFileWithPath:path
+                                    identifier:[NSString stringWithCString:identifier
+                                                                  encoding:NSUTF8StringEncoding]
+                                   isEncrypted:instance.getCrypt()
+                             completionHandler:^(NSError * _Nullable error) {
+                                 NSLog(@"Upload file error: %@", error);
+                             }];
+    });
 }
 
 
