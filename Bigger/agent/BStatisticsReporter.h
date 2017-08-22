@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-void reportStatisticsMessage(const char * msg);
+void reportStatisticsMessage(const char * msg, const char * identifier);
 
 #if defined(__cplusplus)
 }

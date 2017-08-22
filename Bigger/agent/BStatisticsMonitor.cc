@@ -9,8 +9,11 @@
 #include <assert.h>
 #include "BAgent.h"
 #include "BStatisticsReporter.h"
+#include <string.h>
 
 static BStatisticsMonitor* monitor = NULL;
+
+static char identifier[128] = { '\0' };
 
 void initStatisticsMonitor() {
     if (!monitor) {
@@ -18,9 +21,14 @@ void initStatisticsMonitor() {
     }
 }
 
+void setUserIdentifier(const char * iden) {
+    assert(strlen(iden) < sizeof(identifier));
+    strcpy(identifier, iden);
+}
+
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
     assert(eLogType & B_LOG_TYPE_FATAL);
-    reportStatisticsMessage(pLog);
+    reportStatisticsMessage(pLog, identifier);
 }
 
 void BStatisticsMonitor::regMonitor() {

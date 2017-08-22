@@ -28,6 +28,7 @@
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     
+    setUserIdentifier("bigger-example@163.com");
 #warning StatisticsMonitor Closed
 //    initStatisticsMonitor();
     

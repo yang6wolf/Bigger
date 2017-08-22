@@ -16,23 +16,21 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
 @interface BStatisticsReporter : NSObject
 
-+ (void)reportStatisticsMessage:(NSString * _Nonnull)msg;
++ (void)reportStatisticsMessage:(NSString *)msg identifier:(NSString *)identifier;
 
 @end
 
 
 @implementation BStatisticsReporter
 
-+ (void)reportStatisticsMessage:(NSString *)msg {
++ (void)reportStatisticsMessage:(NSString *)msg identifier:(NSString *)identifier {
     NSDictionary* info = [NSBundle mainBundle].infoDictionary;
     NSDateFormatter* formatter = [NSDateFormatter new];
     formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
     
     NSDictionary* params = @{
-                             @"code" : @"-100",
-                             @"domain" : @"Bigger",
                              @"desc" : msg,
-                             
+                             @"identifier" : identifier ?: @"",
                              @"localUpdateTime" : [formatter stringFromDate:[NSDate date]],
                              
                              @"bundleVersion" : info[@"CFBundleShortVersionString"] ?: @"",
@@ -60,7 +58,9 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
 @end
 
-void reportStatisticsMessage(const char * msg) {
+void reportStatisticsMessage(const char * msg, const char * identifier) {
     [BStatisticsReporter reportStatisticsMessage:[NSString stringWithCString:msg
+                                                                    encoding:NSUTF8StringEncoding]
+                                      identifier:[NSString stringWithCString:identifier
                                                                     encoding:NSUTF8StringEncoding]];
 }

@@ -18,10 +18,11 @@ void printLogToConsole(int nType, int bEnable);
 void openBigWriter(const char *_logPath);
 void closeBigWriter();
     
-void runCommand(const char * identifier);
+void runCommand(const char * command);
 
 // 启用Fatal日志实时上报
 void initStatisticsMonitor();
+void setUserIdentifier(const char * iden);
 
 #if defined(__cplusplus)
 }
