@@ -30,6 +30,7 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     
     NSDictionary* params = @{
                              @"desc" : msg,
+                             @"shortDesc" : [msg componentsSeparatedByString:@"] "].lastObject ?: @"",
                              @"identifier" : identifier ?: @"",
                              @"localUpdateTime" : [formatter stringFromDate:[NSDate date]],
                              
