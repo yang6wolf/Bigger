@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "Bigger"
-    s.version      = "0.12.2"
+    s.version      = "0.13.0"
     s.summary      = "贵金属项目所使用的第三方组件(非UI部分)"
     s.homepage     = "https://git.ms.netease.com/preciousmetals/Bigger"
     s.license      = { :type => 'MIT', :file => 'LICENSE'}
