@@ -10,6 +10,7 @@
 #define BigWriter_h
 
 #include <stdio.h>
+#include <string>
 #include "BLogger.h"
 
 class BigWriter : public BLogMonitor {
@@ -38,7 +39,7 @@ public:
     virtual ~BigWriter() {
     }
 private:
-    static char *logPath;
+    static std::string logPath;
     static bool isRegister;
     static bool isCompress;
     static bool isCrypt;

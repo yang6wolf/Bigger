@@ -441,40 +441,55 @@ static bool __openlogfile(const std::string& _log_dir) {
     if (__file_size != UNDEFINED_SIZE || mars_boost::filesystem::exists(logfilepath)) {
         file_exist = true;
     }
+    
     sg_logfile = fopen(logfilepath, "ab");
     
     if (sg_logfile != NULL && file_exist && __file_size == UNDEFINED_SIZE) {
-        char str_temp[4];
+        char str_temp[4] = {0, 0, 0, 0};
         FILE *file_temp = fopen(logfilepath, "rb");
         
-        if (!fread(str_temp, 1, sizeof(str_temp), file_temp)) {
-            printf("read file error!!!");
+        if (file_temp != NULL) {
+            if (!fread(str_temp, 1, sizeof(str_temp), file_temp)) {
+                printf("read file error!!!");
+            }
+            fclose(file_temp);
+            file_temp = NULL;
         }
-        fclose(file_temp);
         
-        if ((str_temp[3] == kMagicAsyncStart && !__is_crypt) || (str_temp[3] != kMagicAsyncStart && __is_crypt)) {
+        if ((str_temp[3] == kMagicAsyncStart && !__is_crypt) || (str_temp[3] != kMagicAsyncStart && __is_crypt)) {//判断加密/不加密是否切换，如果切换了则删除之前的文件。
             fclose(sg_logfile);
             sg_logfile = NULL;
             if (!mars_boost::filesystem::remove(logfilepath)) {
                 printf("remove file error!!!");
+                __file_size = mars_boost::filesystem::file_size(logfilepath);
             }
-            file_exist = false;
+            else {
+                file_exist = false;
+                __file_size = 0;
+            }
             sg_logfile = fopen(logfilepath, "ab");
         }
         else
             __file_size = mars_boost::filesystem::file_size(logfilepath);
     }
     
-    if (sg_logfile != NULL && !file_exist) {
+    if (sg_logfile != NULL && !file_exist) {//在文件开头写入BOM头
+        __file_size = 0;
         char u8_byte_str[3] = {(char)0xEF, (char)0xBB, (char)0xBF};
         if (!fwrite(u8_byte_str, 1, sizeof(u8_byte_str), sg_logfile))
             printf("write BOM error!!!");
         else
-            __file_size = sizeof(u8_byte_str);
+            __file_size += sizeof(u8_byte_str);
     }
     
 	if (NULL == sg_logfile) {
+#if DEV_TARGET
+        char err_log[1024] = {0};
+        snprintf(err_log, sizeof(err_log),"open file error:%d %s, path:%s", errno, strerror(errno), logfilepath);
+        throw err_log;
+#else
         __writetips2console("open file error:%d %s, path:%s", errno, strerror(errno), logfilepath);
+#endif
     }
 
     if (0 != s_last_time && (now_time - s_last_time) > (time_t)((now_tick - s_last_tick) / 1000 + 300)) {
@@ -498,7 +513,7 @@ static bool __openlogfile(const std::string& _log_dir) {
     memcpy(s_last_file_path, logfilepath, sizeof(s_last_file_path));
     s_last_tick = now_tick;
     s_last_time = now_time;
-
+    
 #ifdef __APPLE__
     assert(sg_logfile);
 #endif
@@ -576,7 +591,7 @@ static void __log2file(const void* _data, size_t _len) {
                 }
             }
         }
-        if (__file_size > MAX_SIZE) {
+        if (__file_size > MAX_SIZE && __file_size != UNDEFINED_SIZE) {
             __cutfile(sg_logdir);
         }
     }

@@ -1,7 +1,7 @@
 PODS:
-  - Bigger (0.12.1):
+  - Bigger (0.13.2):
     - LDXLog
-  - LDXLog (1.2.2)
+  - LDXLog (1.3.0)
 
 DEPENDENCIES:
   - Bigger (from `../`)
@@ -11,8 +11,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Bigger: 1edb4225a7c67215112ce7ecfcf84a39e206f4ff
-  LDXLog: 09030626d9625910e6b251b06682dfead1a351e9
+  Bigger: 55c1e4633cf194ba489069a00af652edebd0cee9
+  LDXLog: 19a1289a76e3ee7badbf25cc5ed37c69c1a1c3b9
 
 PODFILE CHECKSUM: d7b6cdf9dba1ebe267148bdab5f903d51f4b5b93
 
