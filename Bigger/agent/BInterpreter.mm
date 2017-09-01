@@ -21,9 +21,11 @@ void uploadLog(const char * identifier) {
         NSString* path = [[NSString stringWithCString:instance.getPath()
                                              encoding:NSUTF8StringEncoding] stringByAppendingPathComponent:@"dailylog.plog"];
         
+        NSString* iden = !identifier ? nil : [NSString stringWithCString:identifier
+                                                                encoding:NSUTF8StringEncoding];
+        
         [BiggerFileUploader uploadFileWithPath:path
-                                    identifier:[NSString stringWithCString:identifier
-                                                                  encoding:NSUTF8StringEncoding]
+                                    identifier:iden
                                    isEncrypted:instance.getCrypt()
                              completionHandler:^(NSError * _Nullable error) {
                                  NSLog(@"Upload file error: %@", error);
