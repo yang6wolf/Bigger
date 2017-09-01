@@ -104,7 +104,7 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     NSString *system = [[UIDevice currentDevice] systemName];
     NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
     NSString *systemString = [NSString stringWithFormat:@"%@,%@", system, systemVersion];
-    NSDictionary *dict = @{@"name" : name, @"version" : version, @"systemInfo" : systemString, @"logFile" : @{@"id" : logId, @"__type" : @"File"}};
+    NSDictionary *dict = @{@"name" : name ?: @"Undefined", @"version" : version, @"systemInfo" : systemString, @"logFile" : @{@"id" : logId, @"__type" : @"File"}};
     NSData* bindingData = [NSJSONSerialization dataWithJSONObject:dict
                                                           options:0
                                                             error:nil];
