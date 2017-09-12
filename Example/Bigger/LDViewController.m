@@ -7,6 +7,7 @@
 //
 
 #import "LDViewController.h"
+#import "Bigger_Example-Swift.h"
 //#import "Bigger.h"
 
 @import Bigger;
@@ -25,6 +26,8 @@
     //printLogToConsole(B_LOG_TYPE_ERROR | B_LOG_TYPE_ERROR, 1);
 
     LOGI("界面加载完成！");
+    
+    [[Foo new] logExample:@"hello world"];
     
     //runCommand("Bigger-Example");
 }

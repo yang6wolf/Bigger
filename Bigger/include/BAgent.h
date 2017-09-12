@@ -9,6 +9,8 @@
 #ifndef BAgent_h
 #define BAgent_h
 
+#import "BCommonDef.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -23,6 +25,12 @@ void runCommand(const char * command);
 // 启用Fatal日志实时上报
 void initStatisticsMonitor();
 void setUserIdentifier(const char * iden);
+
+// This function is only for Swift
+// Don't call this function directly
+// For Objective-C, Use Log[DIEF] macro
+// For Swift, call log[DIEF] function
+void SwiftBiggerLog(BLogType type, const char * log);
 
 #if defined(__cplusplus)
 }

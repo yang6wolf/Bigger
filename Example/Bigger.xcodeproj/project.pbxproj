@@ -22,6 +22,7 @@
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		9DBA7E0E1F29D97900435E66 /* LDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBA7E0D1F29D97900435E66 /* LDViewController.m */; };
 		9DBA7E1F1F2F0B6C00435E66 /* LDTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBA7E1E1F2F0B6C00435E66 /* LDTestViewController.m */; };
+		CC31A98B1F6787CD001A187D /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC31A98A1F6787CD001A187D /* Example.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		9DBA7E1D1F2F0B6C00435E66 /* LDTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDTestViewController.h; sourceTree = "<group>"; };
 		9DBA7E1E1F2F0B6C00435E66 /* LDTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LDTestViewController.m; sourceTree = "<group>"; };
 		BD9ABDBC74E56748D6978FBA /* Bigger.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Bigger.podspec; path = ../Bigger.podspec; sourceTree = "<group>"; };
+		CC31A9891F6787CD001A187D /* Bigger_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bigger_Example-Bridging-Header.h"; sourceTree = "<group>"; };
+		CC31A98A1F6787CD001A187D /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
 		ECC392A41D312F8F7383CE51 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,11 +132,13 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* LDViewController.h */,
 				9DBA7E0D1F29D97900435E66 /* LDViewController.m */,
+				CC31A98A1F6787CD001A187D /* Example.swift */,
 				9DBA7E1D1F2F0B6C00435E66 /* LDTestViewController.h */,
 				9DBA7E1E1F2F0B6C00435E66 /* LDTestViewController.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				CC31A9891F6787CD001A187D /* Bigger_Example-Bridging-Header.h */,
 			);
 			name = "Example for Bigger";
 			path = Bigger;
@@ -220,6 +225,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = NetEase;
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						LastSwiftMigration = 0830;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -322,6 +330,7 @@
 				6003F59E195388D20070C39A /* LDAppDelegate.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				9DBA7E0E1F29D97900435E66 /* LDViewController.m in Sources */,
+				CC31A98B1F6787CD001A187D /* Example.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +449,7 @@
 			baseConfigurationReference = 07E5EE7669CF9C4BFA96FA8B /* Pods-Bigger_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Bigger/Bigger-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -448,6 +458,7 @@
 					"MODULE=\\\"BiggerExample\\\"",
 				);
 				INFOPLIST_FILE = "Bigger/Bigger-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -458,8 +469,13 @@
 					"\"LDXLog\"",
 					"-DTARGET_NAME=\"33\"",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bigger/Bigger_Example-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -469,6 +485,7 @@
 			baseConfigurationReference = 3B22F64B5CAD6E9F833A0BE1 /* Pods-Bigger_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Bigger/Bigger-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -477,6 +494,7 @@
 					"MODULE=\\\"BiggerExample\\\"",
 				);
 				INFOPLIST_FILE = "Bigger/Bigger-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -487,8 +505,12 @@
 					"\"LDXLog\"",
 					"-DTARGET_NAME=\"33\"",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bigger/Bigger_Example-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -496,6 +518,7 @@
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -519,6 +542,7 @@
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

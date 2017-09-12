@@ -7,9 +7,11 @@
 //
 
 #include "BLogger.h"
+#include "BAgent.h"
 
 #include <vector>
 #include <mutex>
+#include <assert.h>
 using namespace std;
 
 vector<BLogMonitor *> vecMonitors;
@@ -50,5 +52,9 @@ int BLogDispatcher::DeReisterMonitor(BLogMonitor *pMonitor) {
     mutex4Monitor.unlock();
     
     return 1;
+}
+
+void SwiftBiggerLog(BLogType type, const char * log) {
+    BLogDispatcher::WriteLog(type, log);
 }
 
