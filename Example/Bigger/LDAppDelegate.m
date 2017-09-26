@@ -14,16 +14,29 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    printLogToConsole(0xFFFFFFFF, 1);
+    NSLOGD(@"%@", @"%3D%26n");
     
+    printLogToConsole(0xFFFFFFFF, 1);
+
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
-    NSArray *testArray=[NSArray arrayWithObjects:@"Shanghai",@"Beijing",@"Guangzhou",@"New York",@"Paris", nil];
+    NSArray *testArray=[NSArray arrayWithObjects:@"上海",@"北京",@"广州",@"New York",@"Paris", nil];
+    NSString *testStr = @"招远";
     
     LOGD(NSCHAR(@"testArr is %@", testArray));
     NSLOGD(@"testArr is %@", testArray);
-    CHECK(1==1, NSLOGD(@"testArr is %@", testArray));
+//    CHECK(1==1, NSLOGD(@"testArr is %@", testArray));
+    
+    char testBuf[1024];
+    sprintf(testBuf, "%s", "%D%n");
+    
+    
+    
+    NSString *strDesc = [testArray description];
+    NSLog(@"%@", strDesc);
+    const char *pLog = [[NSString stringWithFormat: @"testArr is %@, testStr is %@", strDesc, testStr] UTF8String];
+    
     
     NSLog(@"NSLog output.");
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];

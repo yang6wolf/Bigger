@@ -19,12 +19,17 @@
 
 
 
-void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName, int nLineNumber, const char *pFuncName, const char *pFormat, ...) {
+void WriteLogF(BLogType eLogType, const char *pModuleName, const char *pFileName, int nLineNumber, const char *pFuncName, const char *pFormat, ...) {
     va_list arg;
     va_start(arg, pFormat);
     char pBody[1024]={};
     vsnprintf(pBody, sizeof(pBody)-1, pFormat, arg);
     va_end(arg);
+    
+    WriteLog(eLogType, pModuleName, pFileName, nLineNumber, pFuncName, pBody);
+}
+
+void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName, int nLineNumber, const char *pFuncName, const char *pBody) {
     
     timeval tv;
     gettimeofday(&tv, NULL);
