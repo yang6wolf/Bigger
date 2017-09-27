@@ -62,24 +62,25 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 @end
 
 void reportStatisticsMessage(const char * msg, const char * identifier) {
-    NSString* message;
-    long length = strlen(msg);
+    NSString* message = [NSString stringWithCString:msg
+                                           encoding:NSUTF8StringEncoding];
     
-    if (length < 1024 - 1) {
-        message = [NSString stringWithCString:msg
-                                     encoding:NSUTF8StringEncoding];
-    } else {
-        char m[1024];
+    if (!message) {
+        long length = strlen(msg);
+        char* m = malloc(length);
         strcpy(m, msg);
-        for (long l = length; l > length - 6; l--) {
+        for (long l = length - 2; l > length - 8; l--) {
             m[l] = '\0';
             message = [NSString stringWithCString:m encoding:NSUTF8StringEncoding];
             if (message) {
                 break;
             }
         }
+        free(m);
     }
+    
     [BStatisticsReporter reportStatisticsMessage:message
                                       identifier:[NSString stringWithCString:identifier
                                                                     encoding:NSUTF8StringEncoding]];
+    
 }
