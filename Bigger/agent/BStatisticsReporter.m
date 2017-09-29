@@ -28,8 +28,10 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     NSDateFormatter* formatter = [NSDateFormatter new];
     formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
     
+    NSAssert(msg, @"msg should not be nil");
+    
     NSDictionary* params = @{
-                             @"desc" : msg,
+                             @"desc" : msg ?: @"Message body is nil, please check the line of adding this log.",
                              @"shortDesc" : [msg componentsSeparatedByString:@"] "].lastObject ?: @"",
                              @"identifier" : identifier ?: @"",
                              @"localUpdateTime" : [formatter stringFromDate:[NSDate date]],
@@ -60,8 +62,25 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 @end
 
 void reportStatisticsMessage(const char * msg, const char * identifier) {
-    [BStatisticsReporter reportStatisticsMessage:[NSString stringWithCString:msg
-                                                                    encoding:NSUTF8StringEncoding]
+    NSString* message = [NSString stringWithCString:msg
+                                           encoding:NSUTF8StringEncoding];
+    
+    if (!message) {
+        long length = strlen(msg);
+        char* m = malloc(length);
+        strcpy(m, msg);
+        for (long l = length - 2; l > length - 8; l--) {
+            m[l] = '\0';
+            message = [NSString stringWithCString:m encoding:NSUTF8StringEncoding];
+            if (message) {
+                break;
+            }
+        }
+        free(m);
+    }
+    
+    [BStatisticsReporter reportStatisticsMessage:message
                                       identifier:[NSString stringWithCString:identifier
                                                                     encoding:NSUTF8StringEncoding]];
+    
 }
