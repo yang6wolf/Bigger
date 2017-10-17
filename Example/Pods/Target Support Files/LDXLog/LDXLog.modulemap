@@ -1,6 +1,0 @@
-framework module LDXLog {
-  umbrella header "LDXLog-umbrella.h"
-
-  export *
-  module * { export * }
-}

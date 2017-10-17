@@ -4,7 +4,6 @@ source 'https://git.ms.netease.com/commonlibraryios/podspec.git'
 use_frameworks!
 
 target 'Bigger_Example' do
-#  pod 'LDXLog', '~> 1.0.10'
   pod 'Bigger', :path => '../'
 
 end

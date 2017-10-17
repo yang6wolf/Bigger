@@ -16,12 +16,13 @@ Pod::Spec.new do |s|
     s.author       = { "YangXP" => "bjyangxiaopeng1@corp.netease.com" }
     s.source       = { :git => "https://git.ms.netease.com/preciousmetals/Bigger.git", :tag => s.version.to_s}
 
-    s.source_files = 'Bigger/**/*.{h,cc,m,mm,swift}'
+    s.source_files = 'Bigger/**/*.{h,c,cc,hpp,cpp,m,mm,swift}'
+    s.exclude_files = 'Bigger/**/once_atomic.cpp'
     # s.private_header_files = 'Bigger/Classes/BLogger.h'
     s.public_header_files = 'Bigger/include/*.h'
     s.platform = :ios
     s.ios.deployment_target = '8.0'
-    s.dependency 'LDXLog'
 
-
+    s.libraries = 'c++', 'z'
+    s.xcconfig = { "HEADER_SEARCH_PATHS" => "\"${PODS_ROOT}/Bigger/Bigger/oundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\""}
 end
