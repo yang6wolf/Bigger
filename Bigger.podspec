@@ -24,5 +24,5 @@ Pod::Spec.new do |s|
     s.ios.deployment_target = '8.0'
 
     s.libraries = 'c++', 'z'
-    s.xcconfig = { "HEADER_SEARCH_PATHS" => "\"${PODS_ROOT}/Bigger/Bigger/oundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\""}
+    s.xcconfig = { "HEADER_SEARCH_PATHS" => "\"${PODS_ROOT}/Bigger/Bigger/foundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\""}
 end
