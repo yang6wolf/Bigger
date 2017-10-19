@@ -37,3 +37,70 @@ void printLogToConsole(int nType, int bEnable) {
     }
 }
 /**********Printer**********/
+
+/**********Persistencer**********/
+#include <mutex>
+
+#include "boost/iostreams/device/mapped_file.hpp"
+#include "fileWriter/src/log_buffer.h"
+#include "comm/mmap_util.h"
+
+static std::mutex sg_mutex_access;
+static boost::iostreams::mapped_file sg_mmmap_file;
+static LogBuffer *sg_log_buff = NULL;
+static const unsigned int kBufferBlockLength = 150 * 1024;
+static PtrBuffer *sg_reading_buff = NULL;
+
+
+
+bool persistentWrite(void *pBuf, int nLen) {
+    
+    if (sg_reading_buff) {
+        printf("Can not write buff while reading");
+        return false;
+    }
+    
+    sg_mutex_access.lock();
+    if (!sg_mmmap_file.is_open()) {
+        std::string strHome = getenv("HOME");
+        std::string strFilePath = strHome + "/Documents/Persistencer.mmap2";
+        
+        if (OpenMmapFile(strFilePath.c_str(), kBufferBlockLength, sg_mmmap_file)) {
+           sg_log_buff = new LogBuffer(sg_mmmap_file.data(), kBufferBlockLength, false, false, NULL);
+        }
+        else {
+            sg_mutex_access.unlock();
+            return false;
+        }
+    }
+
+    if (!sg_log_buff) {
+        sg_mutex_access.unlock();
+        return false;
+    }
+    
+    sg_log_buff->Write(pBuf, nLen);
+    sg_mutex_access.unlock();
+    return true;
+}
+
+void persistentRead(void **pBuf, int *nLen) {
+    sg_mutex_access.lock();
+    sg_reading_buff = &sg_log_buff->GetData();
+    *pBuf = sg_reading_buff->Ptr();
+    *nLen = (int)sg_reading_buff->Length();
+    sg_mutex_access.unlock();
+}
+
+void persistentClear(bool bClear) {
+    sg_reading_buff = NULL;
+    
+    sg_mutex_access.lock();
+    if (bClear) {
+        AutoBuffer tempBuf;
+        sg_log_buff->Flush(tempBuf);
+    }
+    sg_mutex_access.unlock();
+}
+
+/**********Persistencer**********/

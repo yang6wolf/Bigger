@@ -56,6 +56,18 @@
     
     LOGE("%@", launchOptions);
     
+    NSString *strKeyInfo = @"测试数据持久化";
+    const char *pStrKeyInfo = [strKeyInfo UTF8String];
+    persistentWrite((void *)pStrKeyInfo, (int)strlen(pStrKeyInfo));
+    
+    
+    void *pRetrieve = NULL;
+    int nLen = 0;
+    persistentRead(&pRetrieve, &nLen);
+    printf("\n%s\n", (char *)pRetrieve);
+    
+    persistentClear(nLen%5==0);
+    
     // Override point for customization after application launch.
     return YES;
 }
