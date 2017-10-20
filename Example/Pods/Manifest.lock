@@ -1,5 +1,5 @@
 PODS:
-  - Bigger (0.14.2)
+  - Bigger (0.15.0)
 
 DEPENDENCIES:
   - Bigger (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Bigger: fb65c1dd33eea3c0125d2348354b8b8663104901
+  Bigger: 87d0bc622efe6cbf42e3466ee93b38ef5c573360
 
 PODFILE CHECKSUM: 025aef222c406e62c0342dc6f38e6336ccbe63ac
 

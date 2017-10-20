@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
     s.author       = { "YangXP" => "bjyangxiaopeng1@corp.netease.com" }
     s.source       = { :git => "https://git.ms.netease.com/preciousmetals/Bigger.git", :tag => s.version.to_s}
 
-    s.source_files = 'Bigger/**/*.{h,c,cc,hpp,cpp,ipp,m,mm,swift}'
-    s.exclude_files = 'Bigger/**/once_atomic.cpp'
+    s.source_files = 'Bigger/**/*.{h,c,cc,hpp,cpp,ipp,S,inc,m,mm,swift}'
+    s.exclude_files = 'Bigger/**/boost/libs/thread/**/*'
     # s.private_header_files = 'Bigger/Classes/BLogger.h'
     s.public_header_files = 'Bigger/include/*.h'
     s.platform = :ios
