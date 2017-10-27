@@ -22,10 +22,10 @@ void ConsolePrinter::Callback(BLogType eLogType, const char *pLog) {
     return;
 }
 
-static ConsolePrinter *pLogPrinter=NULL;
+static ConsolePrinter *pLogPrinter = NULL;
 void printLogToConsole(int nType, int bEnable) {
     if (bEnable) {
-        if (pLogPrinter==NULL) {
+        if (pLogPrinter == NULL) {
             pLogPrinter = new ConsolePrinter();
             BLogDispatcher::RegisterMonitor(pLogPrinter);
         }
@@ -79,28 +79,40 @@ bool persistentWrite(void *pBuf, int nLen) {
         return false;
     }
     
-    sg_log_buff->Write(pBuf, nLen);
+    bool bSuccess = sg_log_buff->Write(pBuf, nLen);
     sg_mutex_access.unlock();
-    return true;
+    return bSuccess;
 }
 
-void persistentRead(void **pBuf, int *nLen) {
+bool persistentRead(void **pBuf, int *nLen) {
+    if (sg_log_buff == NULL ||
+        pBuf == NULL ||
+        nLen == NULL) {
+        return false;
+    }
+    
     sg_mutex_access.lock();
     sg_reading_buff = &sg_log_buff->GetData();
     *pBuf = sg_reading_buff->Ptr();
     *nLen = (int)sg_reading_buff->Length();
     sg_mutex_access.unlock();
+    
+    return true;
 }
 
-void persistentClear(bool bClear) {
-    sg_reading_buff = NULL;
+bool persistentClear(bool bClear) {
+    if (sg_log_buff == NULL) {
+        return false;
+    }
     
+    sg_reading_buff = NULL;
     sg_mutex_access.lock();
     if (bClear) {
         AutoBuffer tempBuf;
         sg_log_buff->Flush(tempBuf);
     }
     sg_mutex_access.unlock();
+    return true;
 }
 
 /**********Persistencer**********/

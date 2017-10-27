@@ -35,8 +35,8 @@ void SwiftBiggerLog(BLogType type, const char * log);
 
 //数据持久化
 bool persistentWrite(void *pBuf, int nLen);
-void persistentRead(void **pBuf, int *nLen);
-void persistentClear(bool bClear);
+bool persistentRead(void **pBuf, int *nLen);
+bool persistentClear(bool bClear);
     
 #if defined(__cplusplus)
 }
