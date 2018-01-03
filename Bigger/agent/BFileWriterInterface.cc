@@ -10,6 +10,7 @@
 #include "BFileWriter.h"
 
 static BigWriter *bigWriter = NULL;
+static int logLevel = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
 
 extern void __addListener();
 extern void __removeListener();
@@ -19,11 +20,7 @@ void openBigWriter(const char *_logPath) {
         bigWriter = new BigWriter();
     }
     
-#if DEBUG
-    bigWriter->setMonitorType(B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG);
-#else
-    bigWriter->setMonitorType(B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO);
-#endif
+    bigWriter->setMonitorType(logLevel);
     
     if (bigWriter->isPathNull())
         bigWriter->init(_logPath, true, true);
@@ -56,4 +53,8 @@ void closeBigWriter() {
     BLogDispatcher::DeReisterMonitor(bigWriter);
     bigWriter->setRegister(false);
     __removeListener();
+}
+
+void setWritterLevel(BLogType level) {
+    logLevel = level;
 }

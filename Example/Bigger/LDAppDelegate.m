@@ -17,6 +17,7 @@
     NSLOGD(@"%@", @"%3D%26n");
     
     printLogToConsole(0xFFFFFFFF, 1);
+    setWritterLevel(B_LOG_TYPE_DEBUG);
 
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));

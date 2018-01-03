@@ -23,6 +23,9 @@ void closeBigWriter();
 //运行命令执行器
 void runCommand(const char *command);
 
+// 写入到日志文件的级别
+void setWritterLevel(BLogType level);
+
 // 启用Fatal日志实时上报
 void initStatisticsMonitor();
 void setUserIdentifier(const char *iden);
