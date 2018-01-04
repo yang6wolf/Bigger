@@ -9,10 +9,7 @@
 #import "BFileUploader.h"
 #import "Bigger.h"
 
-static NSString * const LeanCloudID = @"LVQdV4HdaL5WiQAbycKuMhot-gzGzoHsz";
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
-
-static NSString * const LeanCloudKey = @"oQGg6Y8FNQaqAfDdzzHGY6PA";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
 @implementation BiggerFileUploader
@@ -86,8 +83,17 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     
     request.HTTPMethod = @"POST";
-    [request setValue:LeanCloudKey forHTTPHeaderField:LeanCloudKeyHeaderField];
-    [request setValue:LeanCloudID forHTTPHeaderField:LeanCloudIDHeaderField];
+    
+    assert(leancloudAppKey && leancloudAppID);
+    if (!leancloudAppKey || !leancloudAppID) {
+        return nil;
+    }
+    
+    [request setValue:[NSString stringWithCString:leancloudAppKey encoding:NSUTF8StringEncoding]
+   forHTTPHeaderField:LeanCloudKeyHeaderField];
+    [request setValue:[NSString stringWithCString:leancloudAppID encoding:NSUTF8StringEncoding]
+   forHTTPHeaderField:LeanCloudIDHeaderField];
+    
     [request setValue:type forHTTPHeaderField:@"Content-Type"];
     
     request.HTTPBody = data;

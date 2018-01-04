@@ -15,9 +15,12 @@
 extern "C" {
 #endif
     
+extern char * leancloudAppID;
+extern char * leancloudAppKey;
+    
 void printLogToConsole(int nType, int bEnable);
 
-void openBigWriter(const char *_logPath);
+void openBigWriter(const char *_logPath, const char * appID, const char * appKey);
 void closeBigWriter();
 
 //运行命令执行器

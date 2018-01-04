@@ -12,10 +12,13 @@
 static BigWriter *bigWriter = NULL;
 static int logLevel = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
 
+char * leancloudAppID;
+char * leancloudAppKey;
+
 extern void __addListener();
 extern void __removeListener();
 
-void openBigWriter(const char *_logPath) {
+void openBigWriter(const char *_logPath, const char * appID, const char * appKey) {
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
     }
@@ -35,6 +38,12 @@ void openBigWriter(const char *_logPath) {
         bigWriter->setRegister(true);
         __addListener();
     }
+    
+    leancloudAppID = (char *)malloc(strlen(appID) + 1);
+    strcpy(leancloudAppID, appID);
+    
+    leancloudAppKey = (char *)malloc(strlen(appKey) + 1);
+    strcpy(leancloudAppKey, appKey);
 }
 
 bool checkInit() {
