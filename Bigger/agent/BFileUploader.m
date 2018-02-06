@@ -9,6 +9,10 @@
 #import "BFileUploader.h"
 #import "Bigger.h"
 
+#import <sys/utsname.h>
+
+#define APMFileEnable 0
+
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
@@ -20,7 +24,7 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
          completionHandler:(void (^)(NSError * _Nullable error))completion {
     // loading data from path
     NSError* loadingDataError;
-
+    
     NSData* uploadData = [NSData dataWithContentsOfFile:path
                                                 options:0
                                                   error:&loadingDataError];
@@ -77,6 +81,78 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
                                              NSLOGF(@"Upload file (leancloud) error. Error:(%@)", error);
                                          }
                                      }] resume];
+    
+    
+#if APMFileEnable
+    // loading data from path
+    NSError* loadingDataError;
+
+    NSData* uploadData = [NSData dataWithContentsOfFile:path
+                                                options:0
+                                                  error:&loadingDataError];
+    
+    if (loadingDataError) {
+        if (completion) {
+            completion(loadingDataError);
+        }
+        NSLOGF(@"Loading data error. Path:(%@), errorDescription:(%@)", path, loadingDataError.localizedDescription);
+        return;
+    }
+    
+    NSString* boundary = [NSString stringWithFormat:@"--------------------------BiggerUploader%ld", (NSInteger)[NSDate date].timeIntervalSince1970];
+    
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://mt.analytics.163.com/upload"]];
+    
+    request.HTTPMethod = @"POST";
+    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary] forHTTPHeaderField:@"content-type"];
+    
+    NSMutableString* body = [NSMutableString string];
+    
+    NSString *shortVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+    NSString *version = [NSString stringWithFormat:@"%@(%@)", shortVersion, buildString];
+    NSString *system = [[UIDevice currentDevice] systemName];
+    NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
+    NSString *systemString = [NSString stringWithFormat:@"%@,%@", system, systemVersion];
+    
+    struct utsname info;
+    uname(&info);
+    NSString *deviceInfo = [NSString stringWithCString:info.machine encoding:NSUTF8StringEncoding];
+    
+    NSDictionary<NSString *, NSString *> * params = @{@"o" : systemString,
+                                                      @"v" : version,
+                                                      @"id" : @"id",
+                                                      @"u" : @"u",
+                                                      @"iden" : identifier,
+                                                      @"m" : deviceInfo,
+                                                      @"sv" : @"sv",
+                                                      };
+    
+    [params enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+        [body appendFormat:@"--%@", boundary];
+        [body appendFormat:@"\nContent-Disposition: form-data; name=\"%@\"\n\n", key];
+        [body appendFormat:@"%@\n", obj];
+    }];
+    
+    [body appendFormat:@"--%@", boundary];
+    [body appendFormat:@"\nContent-Disposition: form-data; name=\"%@\"; filename=\"123\"", @"file"];
+    [body appendString:@"\nContent-Type: application/octet-stream\n\n"];
+    NSMutableData* bodyData = [[body dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
+    [bodyData appendData:uploadData];
+    [bodyData appendData:[[NSString stringWithFormat:@"\n--%@--", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    request.HTTPBody = bodyData;
+    
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request
+                                     completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                                         if (completion) {
+                                             completion(error);
+                                         }
+                                         if (error) {
+                                             NSLOGF(@"Upload file error. Error:(%@)", error);
+                                         }
+                                     }] resume];
+#endif
 }
 
 + (NSURLRequest *)requestWithURL:(NSString *)url contentType:(NSString *)type uploadData:(NSData *)data {

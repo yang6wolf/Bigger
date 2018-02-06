@@ -45,25 +45,28 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
                                                          options:0
                                                            error:nil];
     
-    NSMutableURLRequest* request =
-    [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://mt.analytics.163.com/fatal_error"]];
-    request.HTTPMethod = @"POST";
+    NSMutableURLRequest* apmRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://mt.analytics.163.com/fatal_error"]];
+    apmRequest.HTTPMethod = @"POST";
+    [apmRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    apmRequest.HTTPBody = uploadData;
+    [[[NSURLSession sharedSession] dataTaskWithRequest:apmRequest] resume];
     
 //    assert(leancloudAppKey && leancloudAppID);
-//    if (!leancloudAppKey || !leancloudAppID) {
-//        return;
-//    }
-//    
-//    [request setValue:[NSString stringWithCString:leancloudAppKey encoding:NSUTF8StringEncoding]
-//   forHTTPHeaderField:LeanCloudKeyHeaderField];
-//    [request setValue:[NSString stringWithCString:leancloudAppID encoding:NSUTF8StringEncoding]
-//   forHTTPHeaderField:LeanCloudIDHeaderField];
+    if (!leancloudAppKey || !leancloudAppID) {
+        return;
+    }
+
+    NSMutableURLRequest* leanCloudRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://api.leancloud.cn/1.1/classes/BiggerErrorLog"]];
     
-    [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    [leanCloudRequest setValue:[NSString stringWithCString:leancloudAppKey encoding:NSUTF8StringEncoding]
+   forHTTPHeaderField:LeanCloudKeyHeaderField];
+    [leanCloudRequest setValue:[NSString stringWithCString:leancloudAppID encoding:NSUTF8StringEncoding]
+   forHTTPHeaderField:LeanCloudIDHeaderField];
+    leanCloudRequest.HTTPMethod = @"POST";
+    [leanCloudRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    leanCloudRequest.HTTPBody = uploadData;
     
-    request.HTTPBody = uploadData;
-    
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request] resume];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:leanCloudRequest] resume];
 }
 
 @end
