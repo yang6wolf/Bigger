@@ -1,6 +1,6 @@
 //
 //  BigInterpreter.cpp
-//  Pods
+//  Bigger
 //
 //  Created by 王仕杰 on 2017/8/1.
 //
@@ -34,7 +34,7 @@ void uploadLog(const char * identifier) {
     });
 }
 
-
+//Command: "Upload https://wa.yang6wolf.tk:8080 -User xxx -Token yyy"
 void runCommand(const char * command) {
     if (1) {
         uploadLog(command);

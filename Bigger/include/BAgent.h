@@ -14,7 +14,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-    
+
 // 1.初始化SDK接口(仅用于格式化日志,尚未做权限校验)
 bool bigger_init_sdk(const char *pAppID, const char *pDeviceID);
 void bigger_release_sdk();
@@ -23,11 +23,11 @@ void bigger_release_sdk();
 void bigger_print_to_console(int nType, int bEnable);
 
 // 3.开启日志实时上报
-void bigger_start_realtime_report(int nType, const char *pURL, int nSize, const char **pArrKeys, const char **pArrVals);
+bool bigger_start_realtime_report(int nType, const char *pURL, int nSize, const char **pArrKeys, const char **pArrVals);
 void bigger_end_realtime_report();
 
 // 4.生成日志文件
-void bigger_start_write_log(int nType, const char *pFilePath);
+bool bigger_start_write_log(int nType, const char *pFilePath);
 void bigger_end_write_log();
     
 // 5.运行命令执行器

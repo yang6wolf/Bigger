@@ -16,7 +16,7 @@
 {
     NSLOGD(@"%@", @"%3D%26n");
     
-    bigger_init_sdk("", "bigger-example@163.com");
+    bigger_init_sdk("BiggerExample-iOS", [[[[UIDevice currentDevice] identifierForVendor] UUIDString]UTF8String]);
 
 
     ILOGD(1==1, "Demonstration of %s ", "ILOG");

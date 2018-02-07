@@ -1,5 +1,5 @@
 //
-//  XlogMonitor.cpp
+//  BFileWriter.cc
 //  Bigger
 //
 //  Created by 杨志超 on 2017/7/27.
@@ -7,9 +7,11 @@
 //
 
 #include "BFileWriter.h"
+#include "BAgentInternal.h"
 #include "../foundation/fileWriter/appender.h"
 
 #import <sys/xattr.h>
+#import <sstream>
 
 std::string BigWriter::logPath = "";
 bool BigWriter::isRegister = false;
@@ -23,22 +25,25 @@ bool BigWriter::isPathNull() {
 }
 
 void BigWriter::Callback(BLogType eLogType, const char *pLog) {
+    std::stringstream streamLog;
+    streamLog << "[" << strAppID << "][" << strDeviceID << "]" << pLog;
+    
     switch (eLogType) {
         case B_LOG_TYPE_FATAL:
-            bigger_appender(pLog);
+            bigger_appender(streamLog.str().c_str());
             flush();
         break;
         
         case B_LOG_TYPE_ERROR:
-            bigger_appender(pLog);
+            bigger_appender(streamLog.str().c_str());
         break;
         
         case B_LOG_TYPE_INFO:
-            bigger_appender(pLog);
+            bigger_appender(streamLog.str().c_str());
         break;
         
         case B_LOG_TYPE_DEBUG:
-            bigger_appender(pLog);
+            bigger_appender(streamLog.str().c_str());
         break;
         
         default:

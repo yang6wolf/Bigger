@@ -1,12 +1,12 @@
 //
-//  XlogInterface.cpp
-//  Pods
+//  BFileWriterInterface.cc
+//  Bigger
 //
 //  Created by 杨志超 on 2017/7/27.
 //
 //
 
-#include "BAgent.h"
+#include "BAgentInternal.h"
 #include "BFileWriter.h"
 
 static BigWriter *bigWriter = NULL;
@@ -14,7 +14,12 @@ static BigWriter *bigWriter = NULL;
 extern void __addListener();
 extern void __removeListener();
 
-void bigger_start_write_log(int nType, const char *pFilePath) {
+bool bigger_start_write_log(int nType, const char *pFilePath) {
+    if (strAppID.empty() || strDeviceID.empty()) {
+        printf("bigger_start_write_log error!\n");
+        return false;
+    }
+    
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
     }
@@ -25,7 +30,7 @@ void bigger_start_write_log(int nType, const char *pFilePath) {
         bigWriter->init(pFilePath, true, true);
     else {
         printf("BigWriter has already been opened!\n");
-        return;
+        return false;
     }
     
     if (!bigWriter->getRegister()) {
@@ -34,6 +39,7 @@ void bigger_start_write_log(int nType, const char *pFilePath) {
         bigWriter->setRegister(true);
         __addListener();
     }
+    return true;
 }
 
 bool checkInit() {

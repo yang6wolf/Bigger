@@ -7,16 +7,28 @@
 //
 
 #include "BAgent.h"
+#include "BAgentInternal.h"
 #include "BLogger.h"
 
 #include <iostream>
 
+bool bInit = false;
+std::string strAppID;
+std::string strDeviceID;
+
 bool bigger_init_sdk(const char *pAppID, const char *pDeviceID) {
-    return false;
+    if (!bInit) {
+        strAppID = pAppID;
+        strDeviceID = pDeviceID;
+        bInit = true;
+    }
+    return true;
 }
 
 void bigger_release_sdk() {
-    
+    strAppID.clear();
+    strDeviceID.clear();
+    bInit = false;
 }
 /**********Printer**********/
 class ConsolePrinter : public BLogMonitor {
