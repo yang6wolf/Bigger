@@ -11,6 +11,13 @@
 
 #include <iostream>
 
+bool bigger_init_sdk(const char *pAppID, const char *pDeviceID) {
+    return false;
+}
+
+void bigger_release_sdk() {
+    
+}
 /**********Printer**********/
 class ConsolePrinter : public BLogMonitor {
 public:
@@ -23,7 +30,7 @@ void ConsolePrinter::Callback(BLogType eLogType, const char *pLog) {
 }
 
 static ConsolePrinter *pLogPrinter = NULL;
-void printLogToConsole(int nType, int bEnable) {
+void bigger_print_to_console(int nType, int bEnable) {
     if (bEnable) {
         if (pLogPrinter == NULL) {
             pLogPrinter = new ConsolePrinter();

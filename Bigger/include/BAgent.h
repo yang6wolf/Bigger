@@ -15,23 +15,29 @@
 extern "C" {
 #endif
     
-extern char * leancloudAppID;
-extern char * leancloudAppKey;
+// 1.初始化SDK接口(仅用于格式化日志,尚未做权限校验)
+bool bigger_init_sdk(const char *pAppID, const char *pDeviceID);
+void bigger_release_sdk();
+
+// 2.开启控制台打印
+void bigger_print_to_console(int nType, int bEnable);
+
+// 3.开启日志实时上报
+void bigger_start_realtime_report(int nType, const char *pURL, int nSize, const char **pArrKeys, const char **pArrVals);
+void bigger_end_realtime_report();
+
+// 4.生成日志文件
+void bigger_start_write_log(int nType, const char *pFilePath);
+void bigger_end_write_log();
     
-void printLogToConsole(int nType, int bEnable);
-
-void openBigWriter(const char *_logPath, const char * appID, const char * appKey);
-void closeBigWriter();
-
-//运行命令执行器
-void runCommand(const char *command);
-
-// 写入到日志文件的级别
-void setWritterLevel(BLogType level);
-
-// 启用Fatal日志实时上报
-void initStatisticsMonitor();
-void setUserIdentifier(const char *iden);
+// 5.运行命令执行器
+void runCommand(const char *pCommand);
+    
+    
+//To be removed
+//void setUserIdentifier(const char *iden);
+//void openBigWriter(const char *_logPath, const char * appID, const char * appKey);
+//void closeBigWriter();
 
 // This function is only for Swift
 // Don't call this function directly

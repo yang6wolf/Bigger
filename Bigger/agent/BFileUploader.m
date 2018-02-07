@@ -16,6 +16,9 @@
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
+extern char * leancloudAppID;
+extern char * leancloudAppKey;
+
 @implementation BiggerFileUploader
 
 + (void)uploadFileWithPath:(NSString *)path

@@ -10,23 +10,19 @@
 #include "BFileWriter.h"
 
 static BigWriter *bigWriter = NULL;
-static int logLevel = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
-
-char * leancloudAppID;
-char * leancloudAppKey;
 
 extern void __addListener();
 extern void __removeListener();
 
-void openBigWriter(const char *_logPath, const char * appID, const char * appKey) {
+void bigger_start_write_log(int nType, const char *pFilePath) {
     if (bigWriter == NULL) {
         bigWriter = new BigWriter();
     }
     
-    bigWriter->setMonitorType(logLevel);
+    bigWriter->setMonitorType(nType);
     
     if (bigWriter->isPathNull())
-        bigWriter->init(_logPath, true, true);
+        bigWriter->init(pFilePath, true, true);
     else {
         printf("BigWriter has already been opened!\n");
         return;
@@ -38,12 +34,6 @@ void openBigWriter(const char *_logPath, const char * appID, const char * appKey
         bigWriter->setRegister(true);
         __addListener();
     }
-    
-    leancloudAppID = (char *)malloc(strlen(appID) + 1);
-    strcpy(leancloudAppID, appID);
-    
-    leancloudAppKey = (char *)malloc(strlen(appKey) + 1);
-    strcpy(leancloudAppKey, appKey);
 }
 
 bool checkInit() {
@@ -54,7 +44,7 @@ bool checkInit() {
     return true;
 }
 
-void closeBigWriter() {
+void bigger_end_write_log() {
     if (!checkInit() || !bigWriter->getRegister())
         return;
     
@@ -62,8 +52,4 @@ void closeBigWriter() {
     BLogDispatcher::DeReisterMonitor(bigWriter);
     bigWriter->setRegister(false);
     __removeListener();
-}
-
-void setWritterLevel(BLogType level) {
-    logLevel = level;
 }

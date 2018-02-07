@@ -15,10 +15,13 @@ static BStatisticsMonitor* monitor = NULL;
 
 static char identifier[128] = { '\0' };
 
-void initStatisticsMonitor() {
+void bigger_start_realtime_report(int nType, const char *pURL, int nSize, const char **pArrKeys, const char **pArrVals) {
     if (!monitor) {
         monitor = new BStatisticsMonitor();
     }
+}
+void bigger_end_realtime_report() {
+    
 }
 
 void setUserIdentifier(const char * iden) {
