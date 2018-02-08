@@ -35,8 +35,10 @@ void uploadLog(const char * identifier) {
 }
 
 //Command: "Upload https://wa.yang6wolf.tk:8080 -User xxx -Token yyy"
-void runCommand(const char * command) {
+bool bigger_run_command(const char *pCommand) {
     if (1) {
-        uploadLog(command);
+        uploadLog(pCommand);
     }
+    
+    return true;
 }

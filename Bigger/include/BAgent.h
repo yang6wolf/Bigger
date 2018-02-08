@@ -31,7 +31,7 @@ bool bigger_start_write_log(int nType, const char *pFilePath);
 void bigger_end_write_log();
     
 // 5.运行命令执行器
-void runCommand(const char *pCommand);
+bool bigger_run_command(const char *pCommand);
     
     
 //To be removed
