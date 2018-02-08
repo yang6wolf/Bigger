@@ -25,6 +25,20 @@ char * leancloudAppKey;
 @implementation BStatisticsReporter
 
 + (void)reportStatisticsMessage:(NSString *)msg identifier:(NSString *)identifier {
+    //报数据给统计中心
+    NSMutableURLRequest *reqLogstash = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://zwwdata.ms.netease.com:8080"]];
+    reqLogstash.HTTPMethod = @"POST";
+    [reqLogstash setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+//    NSString *strBody = @"[RoomID:999][TimeStamp:18-02-02 11:59:31][MSG:Test 测试数据]";
+//    reqLogstash.HTTPBody = [strBody dataUsingEncoding:NSUTF8StringEncoding];
+    reqLogstash.HTTPBody = [msg dataUsingEncoding:NSUTF8StringEncoding];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:reqLogstash] resume];
+    
+    //报数据至LeanCloud(后续优化)
+//    assert(leancloudAppKey && leancloudAppID);
+    if (!leancloudAppKey || !leancloudAppID) {
+        return;
+    }
     NSDictionary* info = [NSBundle mainBundle].infoDictionary;
     NSDateFormatter* formatter = [NSDateFormatter new];
     formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
@@ -53,11 +67,6 @@ char * leancloudAppKey;
     [apmRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     apmRequest.HTTPBody = uploadData;
     [[[NSURLSession sharedSession] dataTaskWithRequest:apmRequest] resume];
-    
-    assert(leancloudAppKey && leancloudAppID);
-    if (!leancloudAppKey || !leancloudAppID) {
-        return;
-    }
 
     NSMutableURLRequest* leanCloudRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://api.leancloud.cn/1.1/classes/BiggerErrorLog"]];
     
@@ -69,14 +78,6 @@ char * leancloudAppKey;
     [leanCloudRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     leanCloudRequest.HTTPBody = uploadData;
     [[[NSURLSession sharedSession] dataTaskWithRequest:leanCloudRequest] resume];
-    
-    NSMutableURLRequest *reqLogstash = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://zwwdata.ms.netease.com:8080"]];
-    reqLogstash.HTTPMethod = @"POST";
-    [reqLogstash setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-//    NSString *strBody = @"[RoomID:999][TimeStamp:18-02-02 11:59:31][MSG:LiveStream num 1 start ok]";
-//    reqLogstash.HTTPBody = [strBody dataUsingEncoding:NSUTF8StringEncoding];
-    reqLogstash.HTTPBody = uploadData;
-     [[[NSURLSession sharedSession] dataTaskWithRequest:reqLogstash] resume];
 }
 
 @end
