@@ -325,6 +325,7 @@
 		2B67AD1EF59B08025279A79367F538E0 /* has_apply.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B00FBC199FE7073CFE6453E043932AAB /* has_apply.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2B7934ADB7AEE179A224C7CC4099BD2B /* list0_c.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6E9C512EB97452AE34E0397A07ACAE71 /* list0_c.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2BA479C3AA34531607E1952969214868 /* adjacent_find.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5C127318C71FAB849503748848735676 /* adjacent_find.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
+		2BA54F1B2041759B00A54635 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA54F1A2041759A00A54635 /* libcurl.a */; };
 		2C01616115F53FC4D132D71D3F2FC0DA /* is_function.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 94569882A4AFA890952FA54169714791 /* is_function.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2C5FC3B82813FF0B835BA91BD97DDDEE /* equal_range.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A945AC16E18C8294B638EBEEBC598505 /* equal_range.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2C6835D328D93B49B416FCCBE3F1EBBC /* function10.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D237AB0368531D57FA97DD6264E192C6 /* function10.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -2195,6 +2196,7 @@
 		2B73C29258E0933DE1014719FA111727 /* times.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = times.hpp; sourceTree = "<group>"; };
 		2B9480EBF95E7B8A0FA474A2D4DF4C13 /* atomic_count_gcc.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = atomic_count_gcc.hpp; sourceTree = "<group>"; };
 		2B9F44B3DE2D5E1F48FF460AC81ED5FF /* size.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = size.hpp; sourceTree = "<group>"; };
+		2BA54F1A2041759A00A54635 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../../Bigger/thirdparty/curl/lib/libcurl.a; sourceTree = "<group>"; };
 		2BC388DD99F0CD270AE44BFE4E9FE748 /* core.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = core.hpp; sourceTree = "<group>"; };
 		2BDC0C76C622510D693D5A328C3648B4 /* signal.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = signal.hpp; sourceTree = "<group>"; };
 		2BFCDF9E487D535DA2B281F5AAD2F97C /* reverse5.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = reverse5.hpp; sourceTree = "<group>"; };
@@ -4446,6 +4448,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BA54F1B2041759B00A54635 /* libcurl.a in Frameworks */,
 				F2E7A4A4336AE3F98AAC85C7D319EE40 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7890,6 +7893,7 @@
 		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2BA54F1A2041759A00A54635 /* libcurl.a */,
 				D35AF013A5F0BAD4F32504907A52519E /* iOS */,
 			);
 			name = Frameworks;
@@ -12286,13 +12290,24 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/Bigger/Bigger-prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers/Private\"",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Bigger/Bigger/foundation/\"",
+					"\"${PODS_ROOT}/../../Bigger/foundation\"",
+				);
 				INFOPLIST_FILE = "Target Support Files/Bigger/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Bigger/Bigger/thirdparty/curl/lib\"",
+					"\"${PODS_ROOT}/../../Bigger/thirdparty/curl/lib\"",
+				);
 				MODULEMAP_FILE = "Target Support Files/Bigger/Bigger.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = Bigger;
@@ -12321,13 +12336,24 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/Bigger/Bigger-prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers/Private\"",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Bigger/Bigger/foundation/\"",
+					"\"${PODS_ROOT}/../../Bigger/foundation\"",
+				);
 				INFOPLIST_FILE = "Target Support Files/Bigger/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Bigger/Bigger/thirdparty/curl/lib\"",
+					"\"${PODS_ROOT}/../../Bigger/thirdparty/curl/lib\"",
+				);
 				MODULEMAP_FILE = "Target Support Files/Bigger/Bigger.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = Bigger;

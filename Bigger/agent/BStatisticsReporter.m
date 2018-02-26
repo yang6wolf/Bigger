@@ -9,6 +9,8 @@
 #import "BStatisticsReporter.h"
 #import "Bigger.h"
 
+#import "../thirdparty/curl/include/curl.h"
+
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
@@ -33,6 +35,19 @@ char * leancloudAppKey;
 //    reqLogstash.HTTPBody = [strBody dataUsingEncoding:NSUTF8StringEncoding];
     reqLogstash.HTTPBody = [msg dataUsingEncoding:NSUTF8StringEncoding];
     [[[NSURLSession sharedSession] dataTaskWithRequest:reqLogstash] resume];
+    
+    curl_global_init(CURL_GLOBAL_ALL);
+    CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
+    if(curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_URL,
+                         "http://www.baidu.com");
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
     
     //报数据至LeanCloud(后续优化)
 //    assert(leancloudAppKey && leancloudAppID);
