@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "BStatisticsReporter.h"
 #import "Bigger.h"
+#import <sys/utsname.h>
 
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
@@ -41,17 +42,46 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
                              @"osVersion" : [UIDevice currentDevice].systemVersion,
                              @"deviceName" : [UIDevice currentDevice].systemName
                              };
-    NSData* uploadData = [NSJSONSerialization dataWithJSONObject:params
-                                                         options:0
-                                                           error:nil];
+    
+    // APM
+    struct utsname i;
+    uname(&i);
+    NSString *deviceInfo = [NSString stringWithCString:i.machine encoding:NSUTF8StringEncoding];
+    
+    NSString* ua = [NSUserDefaults.standardUserDefaults stringForKey:@"UserAgent"];
+    __block NSString *EPSessionID, *MASessionID;
+    [[ua componentsSeparatedByString:@" "] enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj hasPrefix:@"LsessionId"]) {
+            EPSessionID = obj.lastPathComponent;
+        } else if ([obj hasPrefix:@"LDMASessionId"]) {
+            MASessionID = obj.lastPathComponent;
+        }
+        
+        *stop = EPSessionID && MASessionID;
+    }];
+    
+    NSMutableDictionary* extraAPMParams = [@{
+                                     @"id" : [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"] ?: @"", // product id
+                                     @"m" :  deviceInfo ?: @"", // device info
+                                     @"o" : [UIDevice currentDevice].systemVersion ?: @"", // os version
+                                     @"sid_ep" : EPSessionID ?: @"",
+                                     @"sid" : MASessionID ?: @"",
+                                     } mutableCopy];
+    [extraAPMParams addEntriesFromDictionary:params];
     
     NSMutableURLRequest* apmRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://mt.analytics.163.com/fatal_error"]];
     apmRequest.HTTPMethod = @"POST";
     [apmRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    apmRequest.HTTPBody = uploadData;
+    apmRequest.HTTPBody = [NSJSONSerialization dataWithJSONObject:extraAPMParams
+                                                          options:0
+                                                            error:nil];
     [[[NSURLSession sharedSession] dataTaskWithRequest:apmRequest] resume];
     
-//    assert(leancloudAppKey && leancloudAppID);
+    NSData* uploadData = [NSJSONSerialization dataWithJSONObject:params
+                                                         options:0
+                                                           error:nil];
+    // Leancloud
+    assert(leancloudAppKey && leancloudAppID);
     if (!leancloudAppKey || !leancloudAppID) {
         return;
     }
@@ -67,6 +97,15 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     leanCloudRequest.HTTPBody = uploadData;
     
     [[[NSURLSession sharedSession] dataTaskWithRequest:leanCloudRequest] resume];
+
+    // ZWW
+    NSMutableURLRequest *reqLogstash = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://zwwdata.ms.netease.com:8080"]];
+    reqLogstash.HTTPMethod = @"POST";
+    [reqLogstash setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+//    NSString *strBody = @"[RoomID:999][TimeStamp:18-02-02 11:59:31][MSG:LiveStream num 1 start ok]";
+//    reqLogstash.HTTPBody = [strBody dataUsingEncoding:NSUTF8StringEncoding];
+    reqLogstash.HTTPBody = uploadData;
+     [[[NSURLSession sharedSession] dataTaskWithRequest:reqLogstash] resume];
 }
 
 @end
