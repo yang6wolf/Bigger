@@ -9,7 +9,7 @@
 #import "BStatisticsReporter.h"
 #import "Bigger.h"
 
-#import "../thirdparty/curl/include/curl.h"
+#import "curl/curl.h"
 
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
@@ -43,8 +43,11 @@ char * leancloudAppKey;
     if(curl)
     {
         curl_easy_setopt(curl, CURLOPT_URL,
-                         "http://www.baidu.com");
+                         "https://www.baidu.com");
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST | CURLAUTH_BASIC | CURLAUTH_NEGOTIATE);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }
