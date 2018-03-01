@@ -14,6 +14,7 @@
 static BStatisticsMonitor* monitor = NULL;
 
 static char identifier[128] = { '\0' };
+char * appbiID;
 
 void initStatisticsMonitor() {
     if (!monitor) {
@@ -24,6 +25,11 @@ void initStatisticsMonitor() {
 void setUserIdentifier(const char * iden) {
     assert(strlen(iden) < sizeof(identifier));
     strcpy(identifier, iden);
+}
+
+void setAppbiID(const char * ID) {
+    appbiID = (char *)malloc(strlen(ID) + 1);
+    strcpy(appbiID, ID);
 }
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {

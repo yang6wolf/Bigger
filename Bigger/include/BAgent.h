@@ -17,6 +17,7 @@ extern "C" {
     
 extern char * leancloudAppID;
 extern char * leancloudAppKey;
+extern char * appbiID;
     
 void printLogToConsole(int nType, int bEnable);
 
@@ -32,6 +33,7 @@ void setWritterLevel(BLogType level);
 // 启用Fatal日志实时上报
 void initStatisticsMonitor();
 void setUserIdentifier(const char *iden);
+void setAppbiID(const char * ID);
 
 // This function is only for Swift
 // Don't call this function directly
