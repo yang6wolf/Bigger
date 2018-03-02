@@ -61,7 +61,7 @@ static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
     }];
     
     NSMutableDictionary* extraAPMParams = [@{
-                                     @"id" : [NSString stringWithCString:appbiID encoding:NSUTF8StringEncoding] ?: @"", // product id
+                                     @"id" : [NSString stringWithCString:(appbiID ?: "") encoding:NSUTF8StringEncoding] ?: @"", // product id
                                      @"m" :  deviceInfo ?: @"", // device info
                                      @"o" : [UIDevice currentDevice].systemVersion ?: @"", // os version
                                      @"sid_ep" : EPSessionID ?: @"",
