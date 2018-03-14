@@ -321,8 +321,8 @@
 		2AEAD1D5640558FE0ECACCFDB88819B0 /* has_key_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E1D86FD5CD8695EE256FBEE858DE6D34 /* has_key_impl.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2AF847C3CD8A8C7B3236C4E81B9D0F72 /* endian.h in Headers */ = {isa = PBXBuildFile; fileRef = B719E10A8257D07FC2ED14B49E42E831 /* endian.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2B11A8F39DF11E8850184466745A14EC /* type_identity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DA8331318897ACD5E5F227AC588FF9B9 /* type_identity.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
-		2B27AD012046590F00B743E1 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B27AD002046590F00B743E1 /* libcrypto.a */; };
-		2B27AD05204697D000B743E1 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B27AD04204697CF00B743E1 /* libssl.a */; };
+		2B27AD0D20590B8B00B743E1 /* libssl_xp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B27AD0B20590B8B00B743E1 /* libssl_xp.a */; };
+		2B27AD0E20590B8B00B743E1 /* libcrypto_xp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B27AD0C20590B8B00B743E1 /* libcrypto_xp.a */; };
 		2B34F630E6EBF2D2C5021CB955CD23BD /* apply_visitor_binary.hpp in Headers */ = {isa = PBXBuildFile; fileRef = CE6C693814C2932705F7840957900014 /* apply_visitor_binary.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2B67AD1EF59B08025279A79367F538E0 /* has_apply.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B00FBC199FE7073CFE6453E043932AAB /* has_apply.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
 		2B7934ADB7AEE179A224C7CC4099BD2B /* list0_c.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 6E9C512EB97452AE34E0397A07ACAE71 /* list0_c.hpp */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -2195,6 +2195,8 @@
 		2B27AD002046590F00B743E1 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../../Bigger/thirdparty/curl/lib/libcrypto.a; sourceTree = "<group>"; };
 		2B27AD0220465ACF00B743E1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		2B27AD04204697CF00B743E1 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../../Bigger/thirdparty/curl/lib/libssl.a; sourceTree = "<group>"; };
+		2B27AD0B20590B8B00B743E1 /* libssl_xp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl_xp.a; path = ../../Bigger/thirdparty/lib/libssl_xp.a; sourceTree = "<group>"; };
+		2B27AD0C20590B8B00B743E1 /* libcrypto_xp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto_xp.a; path = ../../Bigger/thirdparty/lib/libcrypto_xp.a; sourceTree = "<group>"; };
 		2B32C5E76CB6E70827AFCB338D4F5468 /* is_mem_fun_pointer_impl.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = is_mem_fun_pointer_impl.hpp; sourceTree = "<group>"; };
 		2B34CFFB5949CCB9EE3424F7F3E85C30 /* is_begin_parens.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = is_begin_parens.hpp; sourceTree = "<group>"; };
 		2B615CC6F0A8DDDEDDE6F1177A8AA095 /* lower2.hpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.h; path = lower2.hpp; sourceTree = "<group>"; };
@@ -4453,8 +4455,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B27AD05204697D000B743E1 /* libssl.a in Frameworks */,
-				2B27AD012046590F00B743E1 /* libcrypto.a in Frameworks */,
+				2B27AD0D20590B8B00B743E1 /* libssl_xp.a in Frameworks */,
+				2B27AD0E20590B8B00B743E1 /* libcrypto_xp.a in Frameworks */,
 				2BA54F1B2041759B00A54635 /* libcurl.a in Frameworks */,
 				F2E7A4A4336AE3F98AAC85C7D319EE40 /* Foundation.framework in Frameworks */,
 			);
@@ -7900,6 +7902,8 @@
 		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B27AD0C20590B8B00B743E1 /* libcrypto_xp.a */,
+				2B27AD0B20590B8B00B743E1 /* libssl_xp.a */,
 				2B27AD04204697CF00B743E1 /* libssl.a */,
 				2B27AD0220465ACF00B743E1 /* Security.framework */,
 				2B27AD002046590F00B743E1 /* libcrypto.a */,

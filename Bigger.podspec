@@ -19,10 +19,13 @@ Pod::Spec.new do |s|
     s.source_files = 'Bigger/**/*.{h,c,cc,hpp,cpp,ipp,S,inc,m,mm,swift}'
     s.exclude_files = 'Bigger/**/boost/libs/thread/**/*'
     # s.private_header_files = 'Bigger/Classes/BLogger.h'
+
+    s.vendored_libraries = 'Bigger/thirdparty/lib/*.a'
+
     s.public_header_files = 'Bigger/include/*.h'
     s.platform = :ios
     s.ios.deployment_target = '8.0'
 
     s.libraries = 'c++', 'z'
-    s.xcconfig = { "HEADER_SEARCH_PATHS" => "\"${PODS_ROOT}/Bigger/Bigger/foundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\""}
+    s.xcconfig = { "HEADER_SEARCH_PATHS" => "\"${PODS_ROOT}/Bigger/Bigger/foundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\" \"${PODS_ROOT}/Bigger/Bigger/thirdparty/include\" \"${PODS_ROOT}/../../Bigger/thirdparty/include\" "}
 end
