@@ -37,7 +37,6 @@ void setUserIdentifier(const char * iden) {
 }
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
-    assert(eLogType & B_LOG_TYPE_FATAL);
     
     std::stringstream streamLog;
     streamLog << "[" << strAppID << "][" << strDeviceID << "]" << pLog;

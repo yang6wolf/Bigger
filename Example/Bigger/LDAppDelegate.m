@@ -55,6 +55,7 @@
     NSLog(@"logPath : %@", logPath);
 //    LOGE("启动完成!");
     
+    LOGI("Hello kibana!");
     LOGE("%@", launchOptions);
     
     NSString *strKeyInfo = @"测试数据持久化";
