@@ -13,6 +13,8 @@
 #include <stdarg.h>
 #include <sys/time.h>
 
+#include <future>
+
 #include "BLogger.h"
 #include "BLogFormatter.h"
 #include "BThreadUtil.h"
@@ -37,5 +39,5 @@ void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName,
     char pLog[1024]={};
     formatLogHeader(pLog, eLogType, getpid(), getCurrnetThreadID(), getMainThreadID(), pModuleName, pFileName, nLineNumber, pFuncName, &tv, pBody);
     
-    BLogDispatcher::WriteLog(eLogType, pLog);
+    std::async(std::launch::async, BLogDispatcher::WriteLog, eLogType, pLog);
 }
