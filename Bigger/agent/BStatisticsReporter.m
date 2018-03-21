@@ -36,7 +36,7 @@ char * leancloudAppKey;
     reqLogstash.HTTPBody = [msg dataUsingEncoding:NSUTF8StringEncoding];
     [[[NSURLSession sharedSession] dataTaskWithRequest:reqLogstash] resume];
     
-    curl_global_init(CURL_GLOBAL_ALL);
+/*
     CURL *curl;
     CURLcode res;
     curl = curl_easy_init();
@@ -51,6 +51,7 @@ char * leancloudAppKey;
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }
+*/
     
     //报数据至LeanCloud(后续优化)
 //    assert(leancloudAppKey && leancloudAppID);
