@@ -14,8 +14,8 @@
 static NSString * const LeanCloudIDHeaderField = @"X-LC-Id";
 static NSString * const LeanCloudKeyHeaderField = @"X-LC-Key";
 
-char * leancloudAppID;
-char * leancloudAppKey;
+char *leancloudAppID  = "Qbyt6dGsKpH9q6dP6jpcdmL3-gzGzoHsz";
+char *leancloudAppKey = "Nl9yA0zKgUjGts2sYdlVlX5A";
 
 @interface BStatisticsReporter : NSObject
 
