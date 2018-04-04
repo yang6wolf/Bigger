@@ -26,12 +26,12 @@ bool bigger_start_realtime_report(int nType, const char *pURL, int nSize, const 
     
     if (!monitor) {
         monitor = new BStatisticsMonitor();
-        curl_global_init(CURL_GLOBAL_ALL);
+//        curl_global_init(CURL_GLOBAL_ALL);
     }
     return true;
 }
 void bigger_end_realtime_report() {
-    curl_global_cleanup();
+//    curl_global_cleanup();
 }
 
 void setUserIdentifier(const char * iden) {
