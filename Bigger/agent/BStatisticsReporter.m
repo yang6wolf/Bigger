@@ -52,51 +52,6 @@ char * leancloudAppKey;
         curl_easy_cleanup(curl);
     }
 */
-    
-    //报数据至LeanCloud(后续优化)
-//    assert(leancloudAppKey && leancloudAppID);
-    if (!leancloudAppKey || !leancloudAppID) {
-        return;
-    }
-    NSDictionary* info = [NSBundle mainBundle].infoDictionary;
-    NSDateFormatter* formatter = [NSDateFormatter new];
-    formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
-    
-    NSAssert(msg, @"msg should not be nil");
-    
-    NSDictionary* params = @{
-                             @"desc" : msg ?: @"Message body is nil, please check the line of adding this log.",
-                             @"shortDesc" : [msg componentsSeparatedByString:@"] "].lastObject ?: @"",
-                             @"identifier" : identifier ?: @"",
-                             @"localUpdateTime" : [formatter stringFromDate:[NSDate date]],
-                             
-                             @"bundleVersion" : info[@"CFBundleShortVersionString"] ?: @"",
-                             @"buildVersion" : info[@"CFBundleVersion"] ?: @"",
-                             @"displayName" : info[@"CFBundleDisplayName"] ?: @"",
-                             
-                             @"osVersion" : [UIDevice currentDevice].systemVersion,
-                             @"deviceName" : [UIDevice currentDevice].systemName
-                             };
-    NSData* uploadData = [NSJSONSerialization dataWithJSONObject:params
-                                                         options:0
-                                                           error:nil];
-    
-    NSMutableURLRequest* apmRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://mt.analytics.163.com/fatal_error"]];
-    apmRequest.HTTPMethod = @"POST";
-    [apmRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    apmRequest.HTTPBody = uploadData;
-    [[[NSURLSession sharedSession] dataTaskWithRequest:apmRequest] resume];
-
-    NSMutableURLRequest* leanCloudRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://api.leancloud.cn/1.1/classes/BiggerErrorLog"]];
-    
-    [leanCloudRequest setValue:[NSString stringWithCString:leancloudAppKey encoding:NSUTF8StringEncoding]
-   forHTTPHeaderField:LeanCloudKeyHeaderField];
-    [leanCloudRequest setValue:[NSString stringWithCString:leancloudAppID encoding:NSUTF8StringEncoding]
-   forHTTPHeaderField:LeanCloudIDHeaderField];
-    leanCloudRequest.HTTPMethod = @"POST";
-    [leanCloudRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    leanCloudRequest.HTTPBody = uploadData;
-    [[[NSURLSession sharedSession] dataTaskWithRequest:leanCloudRequest] resume];
 }
 
 @end
