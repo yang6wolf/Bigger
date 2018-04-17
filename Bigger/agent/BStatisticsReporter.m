@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "BStatisticsReporter.h"
 #import "Bigger.h"
+#import <sys/utsname.h>
 
 #import "curl/curl.h"
 

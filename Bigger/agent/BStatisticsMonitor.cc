@@ -17,6 +17,7 @@
 static BStatisticsMonitor* monitor = NULL;
 
 static char identifier[128] = { '\0' };
+char * appbiID;
 
 bool bigger_start_realtime_report(int nType, const char *pURL, int nSize, const char **pArrKeys, const char **pArrVals) {
     if (strAppID.empty() || strDeviceID.empty()) {
@@ -37,6 +38,11 @@ void bigger_end_realtime_report() {
 void setUserIdentifier(const char * iden) {
     assert(strlen(iden) < sizeof(identifier));
     strcpy(identifier, iden);
+}
+
+void setAppbiID(const char * ID) {
+    appbiID = (char *)malloc(strlen(ID) + 1);
+    strcpy(appbiID, ID);
 }
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
