@@ -12,6 +12,9 @@
 #include <vector>
 #include <mutex>
 #include <assert.h>
+
+#include <future>
+
 using namespace std;
 
 vector<BLogMonitor *> vecMonitors;
@@ -55,6 +58,6 @@ int BLogDispatcher::DeReisterMonitor(BLogMonitor *pMonitor) {
 }
 
 void SwiftBiggerLog(BLogType type, const char * log) {
-    BLogDispatcher::WriteLog(type, log);
+    std::async(std::launch::async, BLogDispatcher::WriteLog, type, log);
 }
 
