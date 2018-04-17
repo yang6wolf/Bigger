@@ -26,6 +26,8 @@ const char * foo(const char * bar) {
     bigger_init_sdk("BiggerExample-iOS", [[[[UIDevice currentDevice] identifierForVendor] UUIDString]UTF8String]);
     bigger_print_to_console(B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG | B_LOG_TYPE_ERROR | B_LOG_TYPE_FATAL, 1);
     LOGI("Print all levels of message to console");
+    
+    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "http://zwwdata.ms.netease.com:8080", 0, NULL, NULL);
 
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));

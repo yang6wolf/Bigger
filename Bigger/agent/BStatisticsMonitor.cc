@@ -35,12 +35,15 @@ void bigger_end_realtime_report(const char *pURL) {
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
     const char * log;
+    std::stringstream streamLog;
+    streamLog << "[" << strAppID << "][" << strDeviceID << "]" << pLog;
+    
     if (!fmt || !fmt(pLog)) {
         log = pLog;
     } else {
         log = fmt(pLog);
     }
-    report_statistics_msg(log, url, headerSize, headerField);
+    report_statistics_msg(streamLog.str().c_str(), url, headerSize, headerField);
 }
 
 void BStatisticsMonitor::regMonitor() {
