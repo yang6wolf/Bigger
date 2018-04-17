@@ -9,7 +9,6 @@
 #ifndef BigWriter_h
 #define BigWriter_h
 
-#include <stdio.h>
 #include <string>
 #include "BLogger.h"
 

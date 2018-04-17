@@ -27,7 +27,7 @@
 
     LOGI("界面加载完成！");
     
-    [[Foo new] logExample:@"hello world"];
+    [[Foo new] logExample:@"Hello Swift"];
     
     //runCommand("Bigger-Example");
 }

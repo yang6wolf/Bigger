@@ -1,6 +1,6 @@
 {
   "name": "Bigger",
-  "version": "0.15.0",
+  "version": "0.17.1",
   "summary": "贵金属项目所使用的第三方组件(非UI部分)",
   "homepage": "https://git.ms.netease.com/preciousmetals/Bigger",
   "license": {
@@ -12,10 +12,11 @@
   },
   "source": {
     "git": "https://git.ms.netease.com/preciousmetals/Bigger.git",
-    "tag": "0.15.0"
+    "tag": "0.17.1"
   },
   "source_files": "Bigger/**/*.{h,c,cc,hpp,cpp,ipp,S,inc,m,mm,swift}",
   "exclude_files": "Bigger/**/boost/libs/thread/**/*",
+  "vendored_libraries": "Bigger/thirdparty/lib/*.a",
   "public_header_files": "Bigger/include/*.h",
   "platforms": {
     "ios": "8.0"
@@ -25,6 +26,6 @@
     "z"
   ],
   "xcconfig": {
-    "HEADER_SEARCH_PATHS": "\"${PODS_ROOT}/Bigger/Bigger/foundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\""
+    "HEADER_SEARCH_PATHS": "\"${PODS_ROOT}/Bigger/Bigger/foundation/\"  \"${PODS_ROOT}/../../Bigger/foundation\" \"${PODS_ROOT}/Bigger/Bigger/thirdparty/include\" \"${PODS_ROOT}/../../Bigger/thirdparty/include\" "
   }
 }

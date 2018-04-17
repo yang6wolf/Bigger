@@ -9,7 +9,7 @@
 #include "BAgent.h"
 #include "BAgentInternal.h"
 #include "BLogger.h"
-
+#include "curl/curl.h"
 #include <iostream>
 
 bool bInit = false;
@@ -21,6 +21,7 @@ bool bigger_init_sdk(const char *pAppID, const char *pDeviceID) {
         strAppID = pAppID;
         strDeviceID = pDeviceID;
         bInit = true;
+        curl_global_init(CURL_GLOBAL_SSL);
     }
     return true;
 }
@@ -29,6 +30,7 @@ void bigger_release_sdk() {
     strAppID.clear();
     strDeviceID.clear();
     bInit = false;
+    curl_global_cleanup();
 }
 /**********Printer**********/
 class ConsolePrinter : public BLogMonitor {

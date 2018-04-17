@@ -11,9 +11,6 @@
 
 static BigWriter *bigWriter = NULL;
 
-extern void __addListener();
-extern void __removeListener();
-
 bool bigger_start_write_log(int nType, const char *pFilePath) {
     if (strAppID.empty() || strDeviceID.empty()) {
         printf("bigger_start_write_log error!\n");
@@ -37,7 +34,6 @@ bool bigger_start_write_log(int nType, const char *pFilePath) {
         bigWriter->open();
         BLogDispatcher::RegisterMonitor(bigWriter);
         bigWriter->setRegister(true);
-        __addListener();
     }
     return true;
 }
@@ -57,5 +53,4 @@ void bigger_end_write_log() {
     bigWriter->close();
     BLogDispatcher::DeReisterMonitor(bigWriter);
     bigWriter->setRegister(false);
-    __removeListener();
 }

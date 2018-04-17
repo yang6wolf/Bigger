@@ -8,7 +8,7 @@
 
 #include "BFileWriter.h"
 #include "BAgentInternal.h"
-#include "../foundation/fileWriter/appender.h"
+#include "appender.h"
 
 #import <sys/xattr.h>
 #import <sstream>

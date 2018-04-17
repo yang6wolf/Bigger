@@ -6,8 +6,6 @@
 //  Copyright © 2017年 NetEase. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 //! Project version number for Bigger.
 FOUNDATION_EXPORT double BiggerVersionNumber;
 

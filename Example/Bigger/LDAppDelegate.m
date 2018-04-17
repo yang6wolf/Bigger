@@ -9,54 +9,52 @@
 #import "LDAppDelegate.h"
 
 @import Bigger;
-
+#import "Bigger_Example-Swift.h"
 
 @implementation LDAppDelegate
+
+const char * foo(const char * bar) {
+    char* s = malloc(strlen(bar) + 20);
+    sprintf(s, "{\"log\" : \"%s\"}", bar);
+    return s;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSLOGD(@"%@", @"%3D%26n");
     
     bigger_init_sdk("BiggerExample-iOS", [[[[UIDevice currentDevice] identifierForVendor] UUIDString]UTF8String]);
-
+    bigger_print_to_console(B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG | B_LOG_TYPE_ERROR | B_LOG_TYPE_FATAL, 1);
+    LOGI("Print all levels of message to console");
 
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
-    NSArray *testArray=[NSArray arrayWithObjects:@"上海",@"北京",@"广州",@"New York",@"Paris", nil];
-    NSString *testStr = @"招远";
+    NSArray *testArray = @[@"上海", @"서울", @"つくば", @"New York", @"Москва", @"👨‍👩‍👧‍👦"];
+    NSLOGD(@"Test array is %@", testArray);
     
-    LOGD(NSCHAR(@"testArr is %@", testArray));
-    NSLOGD(@"testArr is %@", testArray);
-//    CHECK(1==1, NSLOGD(@"testArr is %@", testArray));
-    
-    char testBuf[1024];
-    sprintf(testBuf, "%s", "%D%n");
-    
-    
-    
-    NSString *strDesc = [testArray description];
-    NSLog(@"%@", strDesc);
-    const char *pLog = [[NSString stringWithFormat: @"testArr is %@, testStr is %@", strDesc, testStr] UTF8String];
-    
-    
-   
+    NSString *testStr = @"招远 🎱";
+    NSLOGD(@"Test string is %@", testStr);
     
     NSLog(@"NSLog output.");
+    
+    
+    
+    char* headers[3] = {"hello: world", "foo: bar", "Content-Type: application/json"};
+    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, (const char **)headers, foo);
+    LOGI("\nStart report FATAL log to url: %s\n", "https://httpbin.org/post");
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        bigger_end_realtime_report("https://httpbin.org/post");
+        [[Foo new] logExample:@"Remove the reporter with url (https://httpbin.org/post), should not see the realtime upload message"];
+    });
+    
+    
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    
-    LOGF("👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦");
-    
-    bigger_print_to_console(0xFFFFFFFF, 1);
-    bigger_start_realtime_report(B_LOG_TYPE_INFO | B_LOG_TYPE_ERROR |B_LOG_TYPE_FATAL, "", 0, NULL, NULL);
-    //    setWritterLevel(B_LOG_TYPE_DEBUG);
     bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath UTF8String]);
-    //openBigWriter(, "Qbyt6dGsKpH9q6dP6jpcdmL3-gzGzoHsz", "Nl9yA0zKgUjGts2sYdlVlX5A");
     NSLog(@"logPath : %@", logPath);
-//    LOGE("启动完成!");
     
     LOGI("Hello kibana!");
-    LOGE("%@", launchOptions);
+    NSLOGE(@"%@", launchOptions);
     
     NSString *strKeyInfo = @"测试数据持久化";
     const char *pStrKeyInfo = [strKeyInfo UTF8String];

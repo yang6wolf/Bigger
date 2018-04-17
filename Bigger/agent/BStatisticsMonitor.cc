@@ -11,38 +11,50 @@
 #include "BStatisticsReporter.h"
 #include <string.h>
 #include <sstream>
+#include <vector>
 
-static BStatisticsMonitor* monitor = NULL;
+std::vector<BStatisticsMonitor *> global_stat_monitor;
 
-static char identifier[128] = { '\0' };
+bool bigger_start_realtime_report(int nType, const char *pURL, int h_size, const char **headers, LogFormatter formatter) {
 
-bool bigger_start_realtime_report(int nType, const char *pURL, int nSize, const char **pArrKeys, const char **pArrVals) {
-    if (strAppID.empty() || strDeviceID.empty()) {
-        printf("bigger_start_realtime_report error!\n");
-        return false;
-    }
+    global_stat_monitor.push_back(new BStatisticsMonitor(nType, pURL, h_size, headers, formatter));
     
-    if (!monitor) {
-        monitor = new BStatisticsMonitor();
-    }
-    return true;
-}
-void bigger_end_realtime_report() {
-    
+    return false;
 }
 
-void setUserIdentifier(const char * iden) {
-    assert(strlen(iden) < sizeof(identifier));
-    strcpy(identifier, iden);
+void bigger_end_realtime_report(const char *pURL) {
+    for (auto it = global_stat_monitor.begin(); it != global_stat_monitor.end(); ) {
+        if (!strcmp((*it)->getURL(), pURL)) {
+            it = global_stat_monitor.erase(it);
+            delete *it;
+        } else {
+            it++;
+        }
+    }
 }
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
-    
-    std::stringstream streamLog;
-    streamLog << "[" << strAppID << "][" << strDeviceID << "]" << pLog;
-    reportStatisticsMessage(streamLog.str().c_str(), identifier);
+    const char * log;
+    if (!fmt || !fmt(pLog)) {
+        log = pLog;
+    } else {
+        log = fmt(pLog);
+    }
+    report_statistics_msg(log, url, headerSize, headerField);
 }
 
 void BStatisticsMonitor::regMonitor() {
+    _MonitorType = monitorType;
     BLogDispatcher::RegisterMonitor(this);
 }
+
+const char * BStatisticsMonitor::getURL() {
+    return this -> url;
+}
+
+void BStatisticsMonitor::copyStrings(const char **dest, const char **source, int size) {
+    for (int i = 0; i < size; i++) {
+        dest[i] = strdup(source[i]);
+    }
+}
+
