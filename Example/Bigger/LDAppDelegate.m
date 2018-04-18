@@ -21,6 +21,7 @@ const char * foo(const char * bar) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+
     NSLOGD(@"%@", @"%3D%26n");
     
     bigger_init_sdk("BiggerExample-iOS", [[[[UIDevice currentDevice] identifierForVendor] UUIDString]UTF8String]);
@@ -29,6 +30,7 @@ const char * foo(const char * bar) {
     
     bigger_start_realtime_report(B_LOG_TYPE_FATAL, "http://zwwdata.ms.netease.com:8080", 0, NULL, NULL);
 
+#if 0
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
@@ -50,6 +52,7 @@ const char * foo(const char * bar) {
         [[Foo new] logExample:@"Remove the reporter with url (https://httpbin.org/post), should not see the realtime upload message"];
     });
     
+#endif
     
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath UTF8String]);
@@ -57,6 +60,17 @@ const char * foo(const char * bar) {
     
     LOGI("Hello kibana!");
     NSLOGE(@"%@", launchOptions);
+    // run command test
+    char command[1024];
+    NSString* p = [logPath stringByAppendingPathComponent:@"dailylog.plog"];
+    sprintf(command, "LC \
+            -uhttps://api.leancloud.cn/1.1/files/Bigger-some-file\
+            -bhttps://api.leancloud.cn/1.1/classes/Bigger\
+            -p%s\
+            -h\"X-LC-Id: LVQdV4HdaL5WiQAbycKuMhot-gzGzoHsz\"\
+            -h\"X-LC-Key: oQGg6Y8FNQaqAfDdzzHGY6PA\"",
+            [p cStringUsingEncoding:NSUTF8StringEncoding]);
+    bigger_run_command(command);
     
     NSString *strKeyInfo = @"测试数据持久化";
     const char *pStrKeyInfo = [strKeyInfo UTF8String];
