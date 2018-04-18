@@ -117,9 +117,11 @@ void bigger_file_upload_LC(const char * file_url,
         struct stat file_info;
         stat(file_path, &file_info);
         
-        FILE* file = fopen(file_path, "r");
-        char * content = malloc(file_info.st_size);
-        fread(content, file_info.st_size, 1, file);
+        FILE* file = fopen(file_path, "rb");
+        
+        char arg_length_header[100];
+        sprintf(arg_length_header, "Content-Length: %lld", file_info.st_size);
+        http_headers = curl_slist_append(http_headers, arg_length_header);
         
         // response
         char* response;
@@ -127,8 +129,9 @@ void bigger_file_upload_LC(const char * file_url,
         // curl config
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
         curl_easy_setopt(curl, CURLOPT_URL, file_url);
+        curl_easy_setopt(curl, CURLOPT_POST, 1);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, content);
+        curl_easy_setopt(curl, CURLOPT_READDATA, file);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, *WriteCallback);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -188,7 +191,6 @@ void bigger_file_upload_LC(const char * file_url,
         free(response_root);
         curl_slist_free_all(http_headers);
         curl_easy_cleanup(curl);
-        free(content);
         free(response);
         
     }
