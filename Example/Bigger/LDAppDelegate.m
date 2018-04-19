@@ -25,8 +25,8 @@ const char * foo(const char * bar) {
     NSLOGD(@"%@", @"%3D%26n");
     
     bigger_init_sdk("BiggerExample-iOS", [[[[UIDevice currentDevice] identifierForVendor] UUIDString]UTF8String]);
-    bigger_print_to_console(B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG | B_LOG_TYPE_ERROR | B_LOG_TYPE_FATAL, 1);
-    LOGI("Print all levels of message to console");
+    bigger_print_to_console(0xFFFFFFFF, 1);
+    LOGD("Print all levels of message to console");
     
     bigger_start_realtime_report(B_LOG_TYPE_FATAL, "http://zwwdata.ms.netease.com:8080", 0, NULL, NULL);
 
@@ -35,10 +35,10 @@ const char * foo(const char * bar) {
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
     NSArray *testArray = @[@"上海", @"서울", @"つくば", @"New York", @"Москва", @"👨‍👩‍👧‍👦"];
-    NSLOGD(@"Test array is %@", testArray);
+    NSLOGS(@"Test array is %@", testArray);
     
     NSString *testStr = @"招远 🎱";
-    NSLOGD(@"Test string is %@", testStr);
+    NSLOGR(@"Test string is %@", testStr);
     
     NSLog(@"NSLog output.");
     

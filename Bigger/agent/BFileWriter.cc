@@ -28,26 +28,10 @@ void BigWriter::Callback(BLogType eLogType, const char *pLog) {
     std::stringstream streamLog;
     streamLog << "[" << strAppID << "][" << strDeviceID << "]" << pLog;
     
-    switch (eLogType) {
-        case B_LOG_TYPE_FATAL:
-            bigger_appender(streamLog.str().c_str());
-            flush();
-        break;
-        
-        case B_LOG_TYPE_ERROR:
-            bigger_appender(streamLog.str().c_str());
-        break;
-        
-        case B_LOG_TYPE_INFO:
-            bigger_appender(streamLog.str().c_str());
-        break;
-        
-        case B_LOG_TYPE_DEBUG:
-            bigger_appender(streamLog.str().c_str());
-        break;
-        
-        default:
-        break;
+    bigger_appender(streamLog.str().c_str());
+    
+    if (eLogType == B_LOG_TYPE_STATS) {
+        flush();
     }
 }
 

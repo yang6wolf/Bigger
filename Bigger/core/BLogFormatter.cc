@@ -80,6 +80,12 @@ void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID
         case B_LOG_TYPE_DEBUG:
             pLevel="D";
             break;
+        case B_LOG_TYPE_RENDER:
+            pLevel="R";
+            break;
+        case B_LOG_TYPE_STATS:
+            pLevel="S";
+            break;
         case B_LOG_TYPE_INFO:
             pLevel="I";
             break;
@@ -90,7 +96,7 @@ void formatLogHeader(char *pBuf, BLogType eLogType, intmax_t nPID, intmax_t nTID
             pLevel="F";
             break;
         default:
-            pLevel="E";
+            pLevel="U";
             break;
     }
     
