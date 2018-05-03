@@ -29,21 +29,20 @@ extern "C" {
     void bigger_end_realtime_report(const char *pURL);
     
     // 4.生成日志文件
-    bool bigger_start_write_log(int nType, const char *pFilePath);
-    void bigger_end_write_log(void);
+    bool bigger_start_write_log(int nType, const char *pFilePath, const char * filename);
+    void bigger_end_write_log(const char* pFilePath);
     
     // 5.运行命令执行器
-    // Command: APM -u"https://url.to.upload"COMMAND_SPLITTER\
-    //              -p"/path/to/file"COMMAND_SPLITTER\
-    //              -hContent-Type: application/jsonCOMMAND_SPLITTER\
+    // Command: APM -u"https://url.to.upload"
+    //              -p"/path/to/file"
+    //              -hContent-Type: application/json
     //              -a"DeviceID=something"
     
-    // Command: LC -u"https://url.to.upload"COMMAND_SPLITTER\
-    //             -b https://url.to.bind COMMAND_SPLITTER\
-    //             -p"/path/to/file"COMMAND_SPLITTER\
-    //             -hContent-Type: application/jsonCOMMAND_SPLITTER\
+    // Command: LC -u"https://url.to.upload"
+    //             -b https://url.to.bind
+    //             -p"/path/to/file"
+    //             -hContent-Type: application/json
     //             -a"DeviceID=something"
-    extern const char * COMMAND_SPLITTER;
     
     // This is a SYNC function with network usage.
     // Callers should call this function asynchronously by your self

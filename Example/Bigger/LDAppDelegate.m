@@ -27,7 +27,7 @@ const char * foo(const char * bar) {
     bigger_init_sdk("BiggerExample-iOS", [[[[UIDevice currentDevice] identifierForVendor] UUIDString]UTF8String]);
     bigger_print_to_console(B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG | B_LOG_TYPE_ERROR | B_LOG_TYPE_FATAL, 1);
     LOGI("Print all levels of message to console");
-#if 0
+    
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
@@ -49,11 +49,10 @@ const char * foo(const char * bar) {
         [[Foo new] logExample:@"Remove the reporter with url (https://httpbin.org/post), should not see the realtime upload message"];
     });
     
-#endif
-    
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath UTF8String]);
-    NSLog(@"logPath : %@", logPath);
+    NSString* logPath2 = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log2"];
+    bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath UTF8String], "dailylog");
+    bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath2 UTF8String], "daily2log");
     
     LOGI("Hello kibana!");
     NSLOGE(@"%@", launchOptions);
@@ -110,7 +109,10 @@ const char * foo(const char * bar) {
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    bigger_end_write_log();
+    NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
+    NSString* logPath2 = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log2"];
+    bigger_end_write_log(logPath.UTF8String);
+    bigger_end_write_log(logPath2.UTF8String);
 }
 
 @end

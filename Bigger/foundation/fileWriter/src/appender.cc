@@ -49,7 +49,6 @@
 #include <algorithm>
 
 #include "boost/bind.hpp"
-#include "boost/iostreams/device/mapped_file.hpp"
 #include "boost/filesystem.hpp"
 
 #include "comm/thread/lock.h"
@@ -60,7 +59,6 @@
 #include "comm/tickcount.h"
 #include "comm/autobuffer.h"
 #include "comm/ptrbuffer.h"
-#include "comm/xlogger/xloggerbase.h"
 #include "comm/time_utils.h"
 #include "comm/strutil.h"
 #include "comm/mmap_util.h"
@@ -74,56 +72,10 @@
 extern void log_formater(const XLoggerInfo* _info, const char* _logbody, PtrBuffer& _log);
 extern void ConsoleLog(const XLoggerInfo* _info, const char* _log);
 
-static TAppenderMode sg_mode = kAppednerAsync;
+const unsigned int kBufferBlockLength = 150 * 1024;
+const long kMaxLogAliveTime = 10 * 24 * 60 * 60;    // 10 days in second
 
-static std::string sg_logdir;
-static std::string sg_cache_logdir;
-static std::string sg_logfileprefix;
-
-static Mutex sg_mutex_log_file;
-static FILE* sg_logfile = NULL;
-static time_t sg_openfiletime = 0;
-static std::string sg_current_dir;
-
-static Mutex sg_mutex_buffer_async;
-#ifdef _WIN32
-static Condition& sg_cond_buffer_async = *(new Condition());  // 改成引用, 避免在全局释放时执行析构导致crash
-#else
-static Condition sg_cond_buffer_async;
-#endif
-
-static LogBuffer* sg_log_buff = NULL;
-
-static volatile bool sg_log_close = true;
-
-static Tss sg_tss_dumpfile(&free);
-
-#ifdef DEBUG
-static bool sg_consolelog_open = true;
-#else
-static bool sg_consolelog_open = false;
-#endif
-
-static uint64_t sg_max_file_size = 0; // 0, will not split log file.
-
-static void __async_log_thread();
-static Thread sg_thread_async(&__async_log_thread);
-
-static const unsigned int kBufferBlockLength = 150 * 1024;
-static const long kMaxLogAliveTime = 10 * 24 * 60 * 60;	// 10 days in second
-
-static std::string sg_log_extra_msg;
-
-static boost::iostreams::mapped_file sg_mmmap_file;
-
-#define UNDEFINED_SIZE 2000000000
-#define MAX_SIZE 5242880
-#define MIN_SIZE 3145728
-
-static bool __is_crypt;
-static uintmax_t __file_size = UNDEFINED_SIZE;
-static const char kMagicAsyncStart ='\x07';
-static char* __logdata_temp = NULL;
+Tss sg_tss_dumpfile(&free);
 
 namespace {
 class ScopeErrno {
@@ -253,7 +205,7 @@ static bool __append_file(const std::string& _src_file, const std::string& _dst_
     return true;
 }
 
-static void __move_old_files(const std::string& _src_path, const std::string& _dest_path, const std::string& _nameprefix) {
+void Appender::__move_old_files(const std::string& _src_path, const std::string& _dest_path, const std::string& _nameprefix) {
     if (_src_path == _dest_path) {
         return;
     }
@@ -304,7 +256,7 @@ static void __writetips2console(const char* _tips_format, ...) {
     ConsoleLog(&info, tips_info);
 }
 
-static void __cutfile(const std::string& _log_dir) {
+void Appender::__cutfile(const std::string& _log_dir) {
     char logfilepath[1024] = {0};
     __make_logfilename(_log_dir, sg_logfileprefix.c_str(), LOG_EXT, logfilepath, 1024);
     
@@ -359,7 +311,7 @@ static void __cutfile(const std::string& _log_dir) {
     __logdata_temp = NULL;
 }
 
-static bool __writefile(const void* _data, size_t _len, FILE* _file) {
+bool Appender::__writefile(const void* _data, size_t _len, FILE* _file) {
     if (NULL == _file) {
         assert(false);
         return false;
@@ -392,7 +344,7 @@ static bool __writefile(const void* _data, size_t _len, FILE* _file) {
     return true;
 }
 
-static bool __openlogfile(const std::string& _log_dir) {
+bool Appender::__openlogfile(const std::string& _log_dir) {
     if (sg_logdir.empty()) return false;
 
     struct timeval tv;
@@ -512,7 +464,7 @@ static bool __openlogfile(const std::string& _log_dir) {
     return NULL != sg_logfile;
 }
 
-static void __closelogfile() {
+void Appender::__closelogfile() {
     if (NULL == sg_logfile) return;
 
     sg_openfiletime = 0;
@@ -520,7 +472,7 @@ static void __closelogfile() {
     sg_logfile = NULL;
 }
 
-static void __log2file(const void* _data, size_t _len) {
+void Appender::__log2file(const void* _data, size_t _len) {
 	if (NULL == _data || 0 == _len || sg_logdir.empty()) {
 		return;
 	}
@@ -591,7 +543,7 @@ static void __log2file(const void* _data, size_t _len) {
 }
 
 
-static void __writetips2file(const char* _tips_format, ...) {
+void Appender::__writetips2file(const char* _tips_format, ...) {
 
     if (NULL == _tips_format) {
         return;
@@ -609,7 +561,7 @@ static void __writetips2file(const char* _tips_format, ...) {
     __log2file(tmp_buff.Ptr(), tmp_buff.Length());
 }
 
-static void __async_log_thread() {
+void Appender::__async_log_thread() {
     while (true) {
 
         ScopedLock lock_buffer(sg_mutex_buffer_async);
@@ -628,7 +580,7 @@ static void __async_log_thread() {
     }
 }
 
-static void __appender_sync(const XLoggerInfo* _info, const char* _log) {
+void Appender::__appender_sync(const XLoggerInfo* _info, const char* _log) {
 
     char temp[16 * 1024] = {0};     // tell perry,ray if you want modify size.
     PtrBuffer log(temp, 0, sizeof(temp));
@@ -640,7 +592,7 @@ static void __appender_sync(const XLoggerInfo* _info, const char* _log) {
     __log2file(tmp_buff.Ptr(), tmp_buff.Length());
 }
 
-static void __appender_async(const XLoggerInfo* _info, const char* _log) {
+void Appender::__appender_async(const XLoggerInfo* _info, const char* _log) {
     ScopedLock lock(sg_mutex_buffer_async);
     if (NULL == sg_log_buff) return;
 
@@ -665,7 +617,7 @@ static void __appender_async(const XLoggerInfo* _info, const char* _log) {
 //*
 //Bigger file write method
 //*
-static void __bigger_sync(const char* _log) {
+void Appender::__bigger_sync(const char* _log) {
     char temp[16 * 1024] = {0};     // tell perry,ray if you want modify size.
     PtrBuffer log(temp, 0, sizeof(temp));
     log_formater(NULL, _log, log);
@@ -676,7 +628,7 @@ static void __bigger_sync(const char* _log) {
     __log2file(tmp_buff.Ptr(), tmp_buff.Length());
 }
 
-static void __bigger_async(const char* _log) {
+void Appender::__bigger_async(const char* _log) {
     ScopedLock lock(sg_mutex_buffer_async);
     if (NULL == sg_log_buff) return;
     
@@ -696,7 +648,7 @@ static void __bigger_async(const char* _log) {
     }
 }
 
-void bigger_appender(const char* _log) {
+void Appender::bigger_appender(const char* _log) {
     if (sg_log_close) return;
     
     SCOPE_ERRNO();
@@ -737,7 +689,7 @@ void bigger_appender(const char* _log) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void xlogger_appender(const XLoggerInfo* _info, const char* _log) {
+void Appender::xlogger_appender(const XLoggerInfo* _info, const char* _log) {
     if (sg_log_close) return;
 
     SCOPE_ERRNO();
@@ -807,7 +759,7 @@ static unsigned int to_string(const void* signature, int len, char* str) {
     return (unsigned int)(str_p - str);
 }
 
-const char* xlogger_dump(const void* _dumpbuffer, size_t _len) {
+const char* Appender::xlogger_dump(const void* _dumpbuffer, size_t _len) {
     if (NULL == _dumpbuffer || 0 == _len) {
         //        ASSERT(NULL!=_dumpbuffer);
         //        ASSERT(0!=_len);
@@ -867,7 +819,7 @@ const char* xlogger_dump(const void* _dumpbuffer, size_t _len) {
     return (const char*)sg_tss_dumpfile.get();
 }
 
-void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, bool _is_compress, const char* _pub_key) {
+void Appender::appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefix, bool _is_compress, const char* _pub_key) {
     assert(_dir);
     assert(_nameprefix);
     
@@ -880,8 +832,10 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
         __writetips2file("appender has already been opened. _dir:%s _nameprefix:%s", _dir, _nameprefix);
         return;
     }
-    
-    xlogger_SetAppender(&xlogger_appender);
+
+    xlogger_SetAppender(^(const XLoggerInfo *_info, const char *_log) {
+        this -> xlogger_appender(_info, _log);
+    });
     
     //mkdir(_dir, S_IRWXU|S_IRWXG|S_IRWXO);
     boost::filesystem::create_directories(_dir);
@@ -926,34 +880,16 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
             __log2file(buffer.Ptr(), buffer.Length());
     }
     
-    BOOT_RUN_EXIT(appender_close);
-    
+    atexit_b(^{
+        this -> appender_close();
+    });
 }
 
-void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix, const char* _pub_key) {
-    assert(!_cachedir.empty());
-    assert(!_logdir.empty());
-    assert(_nameprefix);
-    
-    sg_logdir = _logdir;
-    
-    if (!_cachedir.empty()) {
-        sg_cache_logdir = _cachedir;
-        boost::filesystem::create_directories(_cachedir);
-        __del_timeout_file(_cachedir);
-        // "_nameprefix" must explicitly convert to "std::string", or when the thread is ready to run, "_nameprefix" has been released.
-        Thread(boost::bind(&__move_old_files, _cachedir, _logdir, std::string(_nameprefix))).start_after(3 * 60 * 1000);
-    }
-    
-    appender_open(_mode, _logdir.c_str(), _nameprefix, true, _pub_key);
-    
-}
-
-void appender_flush() {
+void Appender::appender_flush() {
     sg_cond_buffer_async.notifyAll();
 }
 
-void appender_flush_sync() {
+void Appender::appender_flush_sync() {
     if (kAppednerSync == sg_mode) {
         return;
     }
@@ -971,15 +907,15 @@ void appender_flush_sync() {
 
 }
 
-void appender_close() {
+void Appender::appender_close() {
     if (sg_log_close) return;
 
     sg_log_close = true;
 
     sg_cond_buffer_async.notifyAll();
 
-    if (sg_thread_async.isruning())
-        sg_thread_async.join();
+//    if (sg_thread_async -> isruning())
+//        sg_thread_async -> join();
 
 	
     ScopedLock buffer_lock(sg_mutex_buffer_async);
@@ -999,17 +935,17 @@ void appender_close() {
 	__closelogfile();
 }
 
-void appender_setmode(TAppenderMode _mode) {
+void Appender::appender_setmode(TAppenderMode _mode) {
     sg_mode = _mode;
 
     sg_cond_buffer_async.notifyAll();
 
-    if (kAppednerAsync == sg_mode && !sg_thread_async.isruning()) {
-        sg_thread_async.start();
-    }
+//    if (kAppednerAsync == sg_mode && !sg_thread_async -> isruning()) {
+//        sg_thread_async -> start();
+//    }
 }
 
-bool appender_get_current_log_path(char* _log_path, unsigned int _len) {
+bool Appender::appender_get_current_log_path(char* _log_path, unsigned int _len) {
     if (NULL == _log_path || 0 == _len) return false;
 
     if (sg_logdir.empty())  return false;
@@ -1019,7 +955,7 @@ bool appender_get_current_log_path(char* _log_path, unsigned int _len) {
     return true;
 }
 
-bool appender_get_current_log_cache_path(char* _logPath, unsigned int _len) {
+bool Appender::appender_get_current_log_cache_path(char* _logPath, unsigned int _len) {
     if (NULL == _logPath || 0 == _len) return false;
     
     if (sg_cache_logdir.empty())  return false;
@@ -1028,15 +964,15 @@ bool appender_get_current_log_cache_path(char* _logPath, unsigned int _len) {
     return true;
 }
 
-void appender_set_console_log(bool _is_open) {
+void Appender::appender_set_console_log(bool _is_open) {
     sg_consolelog_open = _is_open;
 }
 
-void appender_set_max_file_size(uint64_t _max_byte_size) {
+void Appender::appender_set_max_file_size(uint64_t _max_byte_size) {
     sg_max_file_size = _max_byte_size;
 }
 
-void appender_setExtraMSg(const char* _msg, unsigned int _len) {
+void Appender::appender_setExtraMSg(const char* _msg, unsigned int _len) {
     sg_log_extra_msg = std::string(_msg, _len);
 }
 

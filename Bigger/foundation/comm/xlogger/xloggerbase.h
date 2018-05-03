@@ -55,7 +55,7 @@ typedef struct XLoggerInfo_t {
 extern intmax_t xlogger_pid();
 extern intmax_t xlogger_tid();
 extern intmax_t xlogger_maintid();
-typedef void (*xlogger_appender_t)(const XLoggerInfo* _info, const char* _log);
+typedef void (^xlogger_appender_t)(const XLoggerInfo* _info, const char* _log);
 extern const char* xlogger_dump(const void* _dumpbuffer, size_t _len);
 
 TLogLevel   xlogger_Level();
