@@ -50,6 +50,7 @@ bool bigger_start_write_log(int nType, const char *pFilePath, const char * filen
         bigWriter->init(pFilePath, true, true);
     else {
         printf("BigWriter has already been opened!\n");
+        delete bigWriter;
         return false;
     }
     
