@@ -6,16 +6,17 @@
 //
 
 #include "BStatisticsMonitor.h"
-#include <assert.h>
 #include "BAgentInternal.h"
 #include "BStatisticsReporter.h"
+#include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include <sstream>
 #include <vector>
 
 std::vector<BStatisticsMonitor *> global_stat_monitor;
 
-bool bigger_start_realtime_report(int nType, const char *pURL, int h_size, const char **headers, LogFormatter formatter) {
+bool bigger_start_realtime_report(int nType, const char *pURL, int h_size, const char * headers[], LogFormatter formatter) {
 
     global_stat_monitor.push_back(new BStatisticsMonitor(nType, pURL, h_size, headers, formatter));
     
@@ -34,13 +35,13 @@ void bigger_end_realtime_report(const char *pURL) {
 }
 
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
-    const char * log;
-    if (!fmt || !fmt(pLog)) {
-        log = pLog;
+    const char *log;
+    if (fmt && (log = fmt(pLog))) {
+        report_statistics_msg(log, url, headerSize, headerField);
+        delete [] log;
     } else {
-        log = fmt(pLog);
+        report_statistics_msg(pLog, url, headerSize, headerField);
     }
-    report_statistics_msg(log, url, headerSize, headerField);
 }
 
 void BStatisticsMonitor::regMonitor() {
@@ -52,9 +53,9 @@ const char * BStatisticsMonitor::getURL() {
     return this -> url;
 }
 
-void BStatisticsMonitor::copyStrings(const char **dest, const char **source, int size) {
+void BStatisticsMonitor::copyStrings(const char * dest[], const char * source [], int size) {
     for (int i = 0; i < size; i++) {
-        dest[i] = strdup(source[i]);
+        dest[i] = source[i];
     }
 }
 

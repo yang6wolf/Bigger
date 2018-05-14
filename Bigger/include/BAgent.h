@@ -25,11 +25,12 @@ extern "C" {
     
     // 3.开启日志实时上报
     typedef const char* (*LogFormatter)(const char * log);
-    bool bigger_start_realtime_report(int nType, const char *pURL, int h_size, const char **headers, LogFormatter formatter);
+    bool bigger_start_realtime_report(int nType, const char *pURL, int h_size, const char * headers[], LogFormatter formatter);
     void bigger_end_realtime_report(const char *pURL);
     
     // 4.生成日志文件
     bool bigger_start_write_log(int nType, const char *pFilePath, const char * filename);
+    void bigger_flush_all_logs(void);
     void bigger_end_write_log(const char* pFilePath);
     
     // 5.运行命令执行器

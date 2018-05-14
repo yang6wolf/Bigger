@@ -42,13 +42,13 @@ bool bigger_start_write_log(int nType, const char *pFilePath, const char * filen
     }
     
     auto bigWriter = new BigWriter();
-    global_writers.push_back(bigWriter);
     
     bigWriter->setMonitorType(nType);
     
-    if (bigWriter->isPathNull())
+    if (bigWriter->isPathNull()) {
         bigWriter->init(pFilePath, true, true);
-    else {
+        global_writers.push_back(bigWriter);
+    } else {
         printf("BigWriter has already been opened!\n");
         delete bigWriter;
         return false;
@@ -60,6 +60,12 @@ bool bigger_start_write_log(int nType, const char *pFilePath, const char * filen
         bigWriter->setRegister(true);
     }
     return true;
+}
+
+void bigger_flush_all_logs() {
+    for (auto it = global_writers.cbegin(); it != global_writers.cend(); it++) {
+        (*it) -> flush();
+    }
 }
 
 void bigger_end_write_log(const char* pFilePath) {    

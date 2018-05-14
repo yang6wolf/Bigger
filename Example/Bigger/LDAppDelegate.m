@@ -41,13 +41,9 @@ const char * foo(const char * bar) {
     
     
     
-    char* headers[3] = {"hello: world", "foo: bar", "Content-Type: application/json"};
-    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, (const char **)headers, foo);
+    const char * headers[3] = {"hello: world", "foo: bar", "Content-Type: application/json"};
+    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, headers, foo);
     LOGI("\nStart report FATAL log to url: %s\n", "https://httpbin.org/post");
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        bigger_end_realtime_report("https://httpbin.org/post");
-        [[Foo new] logExample:@"Remove the reporter with url (https://httpbin.org/post), should not see the realtime upload message"];
-    });
     
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
     NSString* logPath2 = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log2"];
@@ -56,17 +52,6 @@ const char * foo(const char * bar) {
     
     LOGI("Hello kibana!");
     NSLOGE(@"%@", launchOptions);
-    // run command test
-    char command[1024];
-    NSString* p = [logPath stringByAppendingPathComponent:@"dailylog.plog"];
-    sprintf(command, "LC \
-            -uhttps://api.leancloud.cn/1.1/files/Bigger-some-file\
-            -bhttps://api.leancloud.cn/1.1/classes/Bigger\
-            -p%s\
-            -h\"X-LC-Id: LVQdV4HdaL5WiQAbycKuMhot-gzGzoHsz\"\
-            -h\"X-LC-Key: oQGg6Y8FNQaqAfDdzzHGY6PA\"",
-            [p cStringUsingEncoding:NSUTF8StringEncoding]);
-    bigger_run_command(command);
     
     NSString *strKeyInfo = @"测试数据持久化";
     const char *pStrKeyInfo = [strKeyInfo UTF8String];
