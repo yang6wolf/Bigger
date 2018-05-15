@@ -13,16 +13,14 @@
 
 std::vector<BigWriter *> global_writers;
 
-static void flush_all_writers() {
+static void __flush_all_writers() {
     while (true) {
-        for (auto it = global_writers.cbegin(); it != global_writers.cend(); it++) {
-            (*it) -> flush();
-        }
+        bigger_flush_all_logs();
         sleep(15 * 60);
     }
 }
 
-Thread flush_thread(&flush_all_writers);
+Thread flush_thread(&__flush_all_writers);
 
 bool bigger_start_write_log(int nType, const char *pFilePath, const char * filename) {
     if (!flush_thread.isruning()) {

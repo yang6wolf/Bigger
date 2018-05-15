@@ -70,6 +70,8 @@ bool bigger_run_command(const char *pCommand) {
     }
     optind = 1;
     
+    bigger_flush_all_logs();
+    
     if (strstr(pCommand, "APM") == pCommand) {
         // "APM" is the first word in pCommand
         bigger_file_upload_APM(url, path, (const char **)headers, header_size, (const char **)arguments, args_size);
