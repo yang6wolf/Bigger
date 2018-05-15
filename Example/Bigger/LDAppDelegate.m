@@ -13,9 +13,9 @@
 
 @implementation LDAppDelegate
 
-const char * foo(const char * bar) {
-    char* s = malloc(strlen(bar) + 20);
-    sprintf(s, "{\"log\" : \"%s\"}", bar);
+char * formatter(const char * raw) {
+    char* s = malloc(strlen(raw) + 20);
+    sprintf(s, "{\"log\" : \"%s\"}", raw);
     return s;
 }
 
@@ -42,7 +42,7 @@ const char * foo(const char * bar) {
     
     
     const char * headers[3] = {"hello: world", "foo: bar", "Content-Type: application/json"};
-    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, headers, foo);
+    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, headers, *formatter);
     LOGI("\nStart report FATAL log to url: %s\n", "https://httpbin.org/post");
     
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
