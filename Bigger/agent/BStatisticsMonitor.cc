@@ -13,6 +13,7 @@
 #include <string.h>
 #include <sstream>
 #include <vector>
+#include <future>
 
 std::vector<BStatisticsMonitor *> global_stat_monitor;
 
@@ -37,10 +38,10 @@ void bigger_end_realtime_report(const char *pURL) {
 void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
     const char *log;
     if (fmt && (log = fmt(pLog))) {
-        report_statistics_msg(log, url, headerSize, headerField);
+        std::async(std::launch::async, report_statistics_msg, log, url, headerSize, headerField);
         delete [] log;
     } else {
-        report_statistics_msg(pLog, url, headerSize, headerField);
+        std::async(std::launch::async, report_statistics_msg, pLog, url, headerSize, headerField);
     }
 }
 

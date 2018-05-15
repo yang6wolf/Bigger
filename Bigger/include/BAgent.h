@@ -24,7 +24,7 @@ extern "C" {
     void bigger_print_to_console(int nType, int bEnable);
     
     // 3.开启日志实时上报
-    typedef const char* (*LogFormatter)(const char * log);
+    typedef char* (*LogFormatter)(const char * log);
     bool bigger_start_realtime_report(int nType, const char *pURL, int h_size, const char * headers[], LogFormatter formatter);
     void bigger_end_realtime_report(const char *pURL);
     
