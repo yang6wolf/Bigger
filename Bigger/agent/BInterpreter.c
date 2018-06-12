@@ -37,7 +37,7 @@ bool bigger_run_command(const char *pCommand) {
     char ** arguments = calloc(50, sizeof(char *));
     int args_size = 0;
     
-    opterr = 0;
+    opterr = 1;
     int ch;
     while ((ch = getopt(args->argc, args->argv, "u:p:h:a:b:")) != -1) {
         switch (ch) {
@@ -68,6 +68,9 @@ bool bigger_run_command(const char *pCommand) {
                 break;
         }
     }
+    optind = 1;
+    
+    bigger_flush_all_logs();
     
     if (strstr(pCommand, "APM") == pCommand) {
         // "APM" is the first word in pCommand

@@ -11,18 +11,20 @@
 
 #include <string>
 #include "BLogger.h"
+#include "appender.h"
 
 class BigWriter : public BLogMonitor {
 public:
     void Callback(BLogType eLogType, const char *pLog);
     
     void init(const char *_logPath, bool isCompress, bool isCrypt);
-    void open();
+    void open(const char * filename);
     void close();
     void flush();
     void syncFlush();
     
     const char* getPath();
+    const char* getFilename();
     bool isPathNull();
     
     void setMonitorType(int _type) {_MonitorType = _type;};
@@ -33,14 +35,16 @@ public:
     
     BigWriter() {
         _MonitorType = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
+        _MonitorID = arc4random();
     }
     
     virtual ~BigWriter() {
     }
 private:
-    static std::string logPath;
-    static bool isRegister;
-    static bool isCompress;
-    static bool isCrypt;
+    Appender * appender = NULL;
+    std::string logPath;
+    bool isRegister;
+    bool isCompress;
+    bool isCrypt;
 };
 #endif /* BigWriter_h */

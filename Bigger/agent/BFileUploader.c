@@ -10,6 +10,7 @@
 
 #include "curl/curl.h"
 #include "cJSON.h"
+#include "BLoggerWrapper.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -105,6 +106,17 @@ void bigger_file_upload_LC(const char * file_url,
     CURL* curl = curl_easy_init();
     
     if (curl) {
+        // file
+        FILE* file = fopen(file_path, "rb");
+        
+        if (!file) {
+            LOGF("Cannot open file at path %s", file_path);
+            return;
+        }
+        
+        struct stat file_info;
+        stat(file_path, &file_info);
+        
         // http header
         struct curl_slist *http_headers = NULL;
         for (int i = 0; i < header_size; i++) {
@@ -112,12 +124,6 @@ void bigger_file_upload_LC(const char * file_url,
         }
         
         http_headers = curl_slist_append(http_headers, "Content-Type: application/octet-stream");
-        
-        // file
-        struct stat file_info;
-        stat(file_path, &file_info);
-        
-        FILE* file = fopen(file_path, "rb");
         
         char arg_length_header[100];
         sprintf(arg_length_header, "Content-Length: %lld", file_info.st_size);
@@ -145,23 +151,23 @@ void bigger_file_upload_LC(const char * file_url,
         
         if (ret == CURLE_OK && id_string) {
             // bind file body
-            cJSON* body_obj = cJSON_CreateObject();
+            cJSON* request_root = cJSON_CreateObject();
             
             // add arguments to json body
             for (int i = 0; i < args_size; i++) {
                 char * arg = strdup(arguments[i]);
                 char* token = strtok(arg, "=");
                 
-                cJSON_AddStringToObject(body_obj, token, strtok(NULL, "="));
+                cJSON_AddStringToObject(request_root, token, strtok(NULL, "="));
                 
                 free(arg);
             }
             
-            cJSON* log_file_obj = cJSON_AddObjectToObject(body_obj, "logFile");
+            cJSON* log_file_obj = cJSON_AddObjectToObject(request_root, "logFile");
             cJSON_AddStringToObject(log_file_obj, "id", id_string);
             cJSON_AddStringToObject(log_file_obj, "__type", "File");
             
-            char * body_string = cJSON_Print(body_obj);
+            char * body_string = cJSON_Print(request_root);
             printf("body string is:\n%s\n", body_string);
             
             struct curl_slist *bind_headers = NULL;
@@ -179,16 +185,12 @@ void bigger_file_upload_LC(const char * file_url,
             
             curl_easy_perform(curl);
             
-            
+            cJSON_free(body_string);
             curl_slist_free_all(bind_headers);
-            free(log_file_obj);
-            free(body_string);
-            free(body_obj);
-            free(id_string);
+            cJSON_Delete(request_root);
         }
         
-        free(id_obj);
-        free(response_root);
+        cJSON_Delete(response_root);
         curl_slist_free_all(http_headers);
         curl_easy_cleanup(curl);
         free(response);

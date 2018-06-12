@@ -6,6 +6,7 @@
 //
 
 #include "curl/curl.h"
+#include <stdlib.h>
 
 void report_statistics_msg(const char * msg, const char * url, int headerSize, const char** headerField) {
     struct curl_slist *headers = NULL;

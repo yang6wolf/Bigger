@@ -13,9 +13,9 @@
 
 @implementation LDAppDelegate
 
-const char * foo(const char * bar) {
-    char* s = malloc(strlen(bar) + 20);
-    sprintf(s, "{\"log\" : \"%s\"}", bar);
+char * formatter(const char * raw) {
+    char* s = malloc(strlen(raw) + 20);
+    sprintf(s, "{\"log\" : \"%s\"}", raw);
     return s;
 }
 
@@ -30,7 +30,6 @@ const char * foo(const char * bar) {
     
     bigger_start_realtime_report(B_LOG_TYPE_FATAL, "http://zwwdata.ms.netease.com:8080", 0, NULL, NULL);
 
-#if 0
     ILOGD(1==1, "Demonstration of %s ", "ILOG");
     CHECK(1==1, LOGE("Try to use CHECK macro %s", "^_^"));
     
@@ -44,33 +43,17 @@ const char * foo(const char * bar) {
     
     
     
-    char* headers[3] = {"hello: world", "foo: bar", "Content-Type: application/json"};
-    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, (const char **)headers, foo);
+    const char * headers[3] = {"hello: world", "foo: bar", "Content-Type: application/json"};
+    bigger_start_realtime_report(B_LOG_TYPE_FATAL, "https://httpbin.org/post", 3, headers, *formatter);
     LOGI("\nStart report FATAL log to url: %s\n", "https://httpbin.org/post");
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        bigger_end_realtime_report("https://httpbin.org/post");
-        [[Foo new] logExample:@"Remove the reporter with url (https://httpbin.org/post), should not see the realtime upload message"];
-    });
-    
-#endif
     
     NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
-    bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath UTF8String]);
-    NSLog(@"logPath : %@", logPath);
+    NSString* logPath2 = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log2"];
+    bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath UTF8String], "dailylog");
+    bigger_start_write_log(B_LOG_TYPE_DEBUG, [logPath2 UTF8String], "daily2log");
     
     LOGI("Hello kibana!");
     NSLOGE(@"%@", launchOptions);
-    // run command test
-    char command[1024];
-    NSString* p = [logPath stringByAppendingPathComponent:@"dailylog.plog"];
-    sprintf(command, "LC \
-            -uhttps://api.leancloud.cn/1.1/files/Bigger-some-file\
-            -bhttps://api.leancloud.cn/1.1/classes/Bigger\
-            -p%s\
-            -h\"X-LC-Id: LVQdV4HdaL5WiQAbycKuMhot-gzGzoHsz\"\
-            -h\"X-LC-Key: oQGg6Y8FNQaqAfDdzzHGY6PA\"",
-            [p cStringUsingEncoding:NSUTF8StringEncoding]);
-    bigger_run_command(command);
     
     NSString *strKeyInfo = @"测试数据持久化";
     const char *pStrKeyInfo = [strKeyInfo UTF8String];
@@ -113,7 +96,10 @@ const char * foo(const char * bar) {
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    bigger_end_write_log();
+    NSString* logPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log"];
+    NSString* logPath2 = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/log2"];
+    bigger_end_write_log(logPath.UTF8String);
+    bigger_end_write_log(logPath2.UTF8String);
 }
 
 @end

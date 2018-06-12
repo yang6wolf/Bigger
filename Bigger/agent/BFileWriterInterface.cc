@@ -8,49 +8,72 @@
 
 #include "BAgentInternal.h"
 #include "BFileWriter.h"
+#include "thread.h"
+#include <vector>
 
-static BigWriter *bigWriter = NULL;
+std::vector<BigWriter *> global_writers;
 
-bool bigger_start_write_log(int nType, const char *pFilePath) {
+static void __flush_all_writers() {
+    while (true) {
+        bigger_flush_all_logs();
+        sleep(15 * 60);
+    }
+}
+
+Thread flush_thread(&__flush_all_writers);
+
+bool bigger_start_write_log(int nType, const char *pFilePath, const char * filename) {
+    if (!flush_thread.isruning()) {
+        flush_thread.start();
+    }
     if (strAppID.empty() || strDeviceID.empty()) {
         printf("bigger_start_write_log error!\n");
         return false;
     }
     
-    if (bigWriter == NULL) {
-        bigWriter = new BigWriter();
+    for (auto it = global_writers.cbegin(); it != global_writers.cend(); it++) {
+        if (!strcmp((**it).getPath(), pFilePath) && !strcmp((**it).getFilename(), filename)) {
+            // same path and file name
+            printf("File writer with same path is already exist. To change the type, close and reopen it.\n");
+            return false;
+        }
     }
+    
+    auto bigWriter = new BigWriter();
     
     bigWriter->setMonitorType(nType);
     
-    if (bigWriter->isPathNull())
+    if (bigWriter->isPathNull()) {
         bigWriter->init(pFilePath, true, true);
-    else {
+        global_writers.push_back(bigWriter);
+    } else {
         printf("BigWriter has already been opened!\n");
+        delete bigWriter;
         return false;
     }
     
     if (!bigWriter->getRegister()) {
-        bigWriter->open();
+        bigWriter->open(filename);
         BLogDispatcher::RegisterMonitor(bigWriter);
         bigWriter->setRegister(true);
     }
     return true;
 }
 
-bool checkInit() {
-    if (bigWriter == NULL || bigWriter->isPathNull()) {
-        printf("BigWriter didn't open!\n");
-        return false;
+void bigger_flush_all_logs() {
+    for (auto it = global_writers.cbegin(); it != global_writers.cend(); it++) {
+        (*it) -> flush();
     }
-    return true;
 }
 
-void bigger_end_write_log() {
-    if (!checkInit() || !bigWriter->getRegister())
-        return;
-    
-    bigWriter->close();
-    BLogDispatcher::DeReisterMonitor(bigWriter);
-    bigWriter->setRegister(false);
+void bigger_end_write_log(const char* pFilePath) {    
+    for (auto it = global_writers.cbegin(); it != global_writers.cend(); it++) {
+        if (!strcmp((**it).getPath(), pFilePath)) {
+            // same path
+            (*it) -> close();
+            BLogDispatcher::DeReisterMonitor((*it));
+            it = global_writers.erase(it);
+            delete *it;
+        }
+    }
 }
