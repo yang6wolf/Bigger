@@ -15,8 +15,8 @@ std::vector<BigWriter *> global_writers;
 
 static void __flush_all_writers() {
     while (true) {
-        bigger_flush_all_logs();
         sleep(15 * 60);
+        bigger_flush_all_logs();
     }
 }
 

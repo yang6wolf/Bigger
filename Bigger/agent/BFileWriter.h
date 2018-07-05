@@ -33,7 +33,7 @@ public:
     bool getCrypt() {return isCrypt;};
     bool getCompress() {return isCompress;};
     
-    BigWriter() {
+    BigWriter(): isRegister(false), isCompress(false), isCrypt(false) {
         _MonitorType = B_LOG_TYPE_FATAL | B_LOG_TYPE_ERROR | B_LOG_TYPE_INFO | B_LOG_TYPE_DEBUG;
         _MonitorID = arc4random();
     }
