@@ -44,7 +44,8 @@ void WriteLog(BLogType eLogType, const char *pModuleName, const char *pFileName,
 //    int64_t t2 = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 //    int64_t d1 = t2 - t1;
     
-    std::async(std::launch::async, BLogDispatcher::WriteLog, eLogType, pLog);
+    std::future<void> future = std::async(std::launch::async, BLogDispatcher::WriteLog, eLogType, pLog);
+    future.wait_for(std::chrono::milliseconds(0));
     
 //    gettimeofday(&tv,NULL);
 //    int64_t t3 = tv.tv_sec * 1000 + tv.tv_usec / 1000;

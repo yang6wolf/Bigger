@@ -58,6 +58,7 @@ int BLogDispatcher::DeReisterMonitor(BLogMonitor *pMonitor) {
 }
 
 void SwiftBiggerLog(BLogType type, const char * log) {
-    std::async(std::launch::async, BLogDispatcher::WriteLog, type, log);
+    std::future<void> f = std::async(std::launch::async, BLogDispatcher::WriteLog, type, log);
+    f.wait_for(std::chrono::milliseconds(0));
 }
 
