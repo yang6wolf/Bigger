@@ -8,7 +8,7 @@
 #include "curl/curl.h"
 #include <stdlib.h>
 
-void report_statistics_msg(const char * msg, const char * url, int headerSize, const char** headerField) {
+void report_statistics_msg(char * msg, const char * url, int headerSize, const char** headerField) {
     struct curl_slist *headers = NULL;
     
     for (int i = 0; i < headerSize; i++) {
@@ -28,5 +28,6 @@ void report_statistics_msg(const char * msg, const char * url, int headerSize, c
         curl_easy_cleanup(curl);
     }
     
+    free(msg);
     curl_slist_free_all(headers);
 }

@@ -39,7 +39,9 @@ void BStatisticsMonitor::Callback(BLogType eLogType, const char *pLog) {
     //暂时不引入fmt函数及其逻辑
     std::stringstream streamLog;
     streamLog << "[" << strAppID << "][" << strDeviceID << "]" << pLog;
-    report_statistics_msg(streamLog.str().c_str(), url, headerSize, headerField);
+    char * msg = strdup(streamLog.str().c_str());
+    std::thread t(report_statistics_msg, msg, url, headerSize, headerField);
+    t.detach();
 }
 
 void BStatisticsMonitor::regMonitor() {
